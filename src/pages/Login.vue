@@ -1,7 +1,7 @@
 <template>
   <q-card bordered flat class="card">
     <q-card-section class="text-center">
-      <div class="text-h6 text-bold q-mb-lg">S'authentifier</div>
+      <div class="page-title text-h5 text-bold q-mb-lg">S'authentifier</div>
       <q-form>
         <q-input
           color="green"
