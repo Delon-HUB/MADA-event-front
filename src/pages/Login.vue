@@ -8,11 +8,6 @@
           class="q-mb-md"
           outlined
           rounded
-<<<<<<< HEAD
-          v-model="email"
-          type="email"
-          label="Votre email"
-=======
           v-model="userCredential.email"
           type="email"
           label="Votre email"
@@ -22,7 +17,6 @@
                 userCredential.email || '',
               ) || 'Veuillez entrer une adresse e-mail valide',
           ]"
->>>>>>> feature/auth
         >
           <template v-slot:prepend>
             <q-icon name="mail" />
@@ -33,11 +27,7 @@
           rounded
           outlined
           type="password"
-<<<<<<< HEAD
-          v-model="password"
-=======
           v-model="userCredential.password"
->>>>>>> feature/auth
           label="Votre mot de passe"
         >
           <template v-slot:prepend>
@@ -61,14 +51,9 @@
             flat
             rounded
             class="text-white text-bold"
-<<<<<<< HEAD
-            :to="'/'"
-            :loading="loading"
-=======
             v-on:click="loginHandler(userCredential)"
             :loading="loading"
             :disable="!canSend"
->>>>>>> feature/auth
             >Se connecter</q-btn
           >
         </div>
