@@ -1,6 +1,9 @@
+import type { EError } from '@/enums/EError'
 import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
-import axios from 'axios'
+import { errorForFrenchUser } from '@/utils/errorForHumain'
+import axios, { AxiosError } from 'axios'
+import { Notify } from 'quasar'
 import type {
   RouteLocationNormalized,
   RouteLocationNormalizedLoaded,
@@ -46,6 +49,43 @@ router.beforeResolve(
     const $authStore = await useAuthStore()
     if (to.meta.requireEmail && !$authStore.email) next(from.path)
     else next()
+  },
+)
+
+publicAPI.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const message = errorForFrenchUser(
+      (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
+    )
+    Notify.create({
+      message: message,
+      position: 'top',
+      type: 'error',
+      icon: 'warning',
+      iconColor: 'red',
+      classes: 'bg-white text-black',
+    })
+    return Promise.reject(error)
+  },
+)
+
+secureAPI.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const message = errorForFrenchUser(
+      (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
+    )
+    Notify.create({
+      message: message,
+      position: 'top',
+      type: 'error',
+      color: 'accent',
+      icon: 'warning',
+      iconColor: 'red',
+      classes: 'bg-white text-black',
+    })
+    return Promise.reject(error)
   },
 )
 
