@@ -11,6 +11,15 @@ export const useAuthStore = defineStore('auth', () => {
     return await publicAPI.post('/auth/register', newUser)
   }
 
+  const login = async (userCredential: Partial<IUser>) => {
+    return await publicAPI.post('/auth/login', userCredential)
+  }
+
+  const setToken = (_token: string) => {
+    localStorage.setItem('token', _token)
+    token.value = _token
+  }
+
   const verifyOTP = async (email: string, otp: string) => {
     return await publicAPI.post('/auth/verify-otp', { email, otp })
   }
@@ -28,6 +37,8 @@ export const useAuthStore = defineStore('auth', () => {
     email,
     token,
     setEmail,
+    setToken,
+    login,
     register,
     verifyOTP,
     resendOTP,

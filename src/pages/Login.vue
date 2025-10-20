@@ -8,9 +8,21 @@
           class="q-mb-md"
           outlined
           rounded
+<<<<<<< HEAD
           v-model="email"
           type="email"
           label="Votre email"
+=======
+          v-model="userCredential.email"
+          type="email"
+          label="Votre email"
+          :rules="[
+            () =>
+              /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm.test(
+                userCredential.email || '',
+              ) || 'Veuillez entrer une adresse e-mail valide',
+          ]"
+>>>>>>> feature/auth
         >
           <template v-slot:prepend>
             <q-icon name="mail" />
@@ -21,7 +33,11 @@
           rounded
           outlined
           type="password"
+<<<<<<< HEAD
           v-model="password"
+=======
+          v-model="userCredential.password"
+>>>>>>> feature/auth
           label="Votre mot de passe"
         >
           <template v-slot:prepend>
@@ -45,8 +61,14 @@
             flat
             rounded
             class="text-white text-bold"
+<<<<<<< HEAD
             :to="'/'"
             :loading="loading"
+=======
+            v-on:click="loginHandler(userCredential)"
+            :loading="loading"
+            :disable="!canSend"
+>>>>>>> feature/auth
             >Se connecter</q-btn
           >
         </div>
@@ -66,24 +88,34 @@
   </q-card>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { EOTPOrigin } from '@/enums/EOTPOrigin'
+import type { IUser } from '@/interfaces/IUser'
+import router from '@/router'
+import { useAuthStore } from '@/stores/Auth.store'
+import { computed, reactive, ref } from 'vue'
 
+const canSend = computed(() =>
+  /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm.test(userCredential.email || ''),
+)
 const loading = ref<boolean>(false)
-
-const email = ref<string>('')
-const password = ref<string>('')
+const userCredential = reactive<Partial<IUser>>({
+  email: '',
+  password: '',
+})
 const forgiveMe = ref<boolean>(false)
 
-const loginHandler = () => {
+const $authStore = useAuthStore()
+const loginHandler = async (userCredential: Partial<IUser>) => {
   loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 2_000)
+  try {
+    const { accessToken, verified } = await (await $authStore.login(userCredential)).data
+    $authStore.setEmail(userCredential.email!.trim())
+    $authStore.setToken(accessToken)
+    if (verified) router.push({ path: '/' })
+    else router.push({ path: '/auth/verify-identity', query: { from: EOTPOrigin.LOGIN } })
+  } catch (error) {
+    console.error(error)
+  }
+  loading.value = false
 }
 </script>
-
-<style scoped>
-.page-title {
-  color: #14452f;
-}
-</style>
