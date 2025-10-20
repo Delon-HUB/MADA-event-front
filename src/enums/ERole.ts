@@ -1,4 +1,4 @@
 export enum ERole {
-  'ORGANIZER',
-  'CLIENT',
+  ORGANIZER = 'ORGANIZER',
+  CLIENT = 'CLIENT',
 }
