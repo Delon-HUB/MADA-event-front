@@ -1,6 +1,7 @@
 <template>
   <q-card bordered flat class="card">
     <q-card-section class="text-center">
+<<<<<<< HEAD
       <p class="text-h6 text-bold q-mb-lg">
         {{ step == 1 ? "S'inscrire en tant que" : 'Veuillez remplir ce formulaire' }}
       </p>
@@ -37,6 +38,10 @@
         </p>
       </div>
       <div v-if="step === 2" class="scroll-input">
+=======
+      <div class="page-title text-h5 text-bold q-mb-lg">S'inscrire</div>
+      <div class="scroll-input">
+>>>>>>> 0b77a8a (feat(register): design)
         <q-input
           color="green"
           class="q-mb-md"
