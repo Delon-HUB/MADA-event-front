@@ -29,5 +29,8 @@ coverage
 
 *.tsbuildinfo
 
+#android
+android
+
 # Environment
 .env*
