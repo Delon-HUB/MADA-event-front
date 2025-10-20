@@ -22,7 +22,16 @@ const router = createRouter({
       path: '/auth',
       component: () => import('@/layouts/AuthLayout.vue'),
       redirect: '/auth/login',
+<<<<<<< HEAD
       children: [...AUTH_ROUTER],
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: () => import('../pages/NotFound.vue'),
+=======
+      children: [],
+>>>>>>> 36669de (feat: add not found page)
     },
     {
       path: '/:catchAll(.*)',
