@@ -9,4 +9,9 @@ export const AUTH_ROUTER = [
     name: 'register',
     component: () => import('@/pages/Register.vue'),
   },
+  {
+    path: 'verify-identity',
+    meta: { requireEmail: true },
+    component: () => import('../pages/OTP.vue'),
+  },
 ]
