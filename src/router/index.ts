@@ -8,6 +8,7 @@ const router = createRouter({
     {
       path: '/',
       component: MainLayout,
+      meta: { requireAuth: true },
       children: [],
     },
     {
