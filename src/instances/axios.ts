@@ -37,4 +37,16 @@ router.beforeEach(
   },
 )
 
+router.beforeResolve(
+  async (
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalizedLoaded,
+    next: NavigationGuardNext,
+  ) => {
+    const $authStore = await useAuthStore()
+    if (to.meta.requireEmail && !$authStore.email) next(from.path)
+    else next()
+  },
+)
+
 export { publicAPI, secureAPI }
