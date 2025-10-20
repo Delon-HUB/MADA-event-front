@@ -45,7 +45,7 @@
             flat
             rounded
             class="text-white text-bold"
-            v-on:click="loginHandler()"
+            :to="'/'"
             :loading="loading"
             >Se connecter</q-btn
           >
