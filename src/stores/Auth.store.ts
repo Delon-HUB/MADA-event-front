@@ -1,5 +1,7 @@
-import { publicAPI } from '@/instances/axios'
+import { publicAPI, secureAPI } from '@/instances/axios'
 import type { IUser } from '@/interfaces/IUser'
+import router from '@/router'
+import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -18,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   const setToken = (_token: string) => {
     localStorage.setItem('token', _token)
     token.value = _token
+    secureAPI.defaults.headers.common.Authorization = `Bearer ${token}`
   }
 
   const verifyOTP = async (email: string, otp: string) => {
@@ -33,9 +36,19 @@ export const useAuthStore = defineStore('auth', () => {
     email.value = _email
   }
 
+  const logout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('email')
+    token.value = ''
+    email.value = ''
+    secureAPI.defaults.headers.common.Authorization
+    router.push('/auth/login')
+  }
+
   return {
     email,
     token,
+    logout,
     setEmail,
     setToken,
     login,

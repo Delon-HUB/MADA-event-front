@@ -1,16 +1,10 @@
 import type { EError } from '@/enums/EError'
 import router from '@/router'
-import { useAuthStore } from '@/stores/Auth.store'
 import { errorForFrenchUser } from '@/utils/errorForHumain'
 import axios, { AxiosError } from 'axios'
 import { Notify } from 'quasar'
-import type {
-  RouteLocationNormalized,
-  RouteLocationNormalizedLoaded,
-  NavigationGuardNext,
-} from 'vue-router'
 
-const secureAPI = axios.create({
+let secureAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -26,31 +20,6 @@ const publicAPI = axios.create({
     Accept: 'application/json',
   },
 })
-
-router.beforeEach(
-  async (
-    to: RouteLocationNormalized,
-    from: RouteLocationNormalizedLoaded,
-    next: NavigationGuardNext,
-  ) => {
-    const $authStore = await useAuthStore()
-
-    if (to.meta.requireAuth && !$authStore.token.trim()) next('/auth/login')
-    else next()
-  },
-)
-
-router.beforeResolve(
-  async (
-    to: RouteLocationNormalized,
-    from: RouteLocationNormalizedLoaded,
-    next: NavigationGuardNext,
-  ) => {
-    const $authStore = await useAuthStore()
-    if (to.meta.requireEmail && !$authStore.email) next(from.path)
-    else next()
-  },
-)
 
 publicAPI.interceptors.response.use(
   (response) => response,
@@ -76,6 +45,7 @@ secureAPI.interceptors.response.use(
     const message = errorForFrenchUser(
       (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
     )
+    if (error.status == 401) router.push('/auth/login')
     Notify.create({
       message: message,
       position: 'top',
