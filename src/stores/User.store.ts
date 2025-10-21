@@ -12,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const getMyInformation = async () => {
-    const response = await secureAPI.get('/user/me')
+    const response = await secureAPI.post('/user/me')
     return response
   }
 
@@ -25,5 +25,5 @@ export const useUserStore = defineStore('user', () => {
     return currentUser
   }
 
-  return { getMyInformation,getCurrentUser, init, setCurrentUser }
+  return { getMyInformation, getCurrentUser, init, setCurrentUser }
 })
