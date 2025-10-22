@@ -41,7 +41,6 @@
               :options="options"
               label="Catégorie"
             />
-
             <div class="row q-mb-md">
               <div class="col q-mr-xs">
                 <q-select outlined v-model="select" :options="options" label="Ville" />
@@ -49,7 +48,6 @@
               <div class="col">
                 <q-input
                   color="green"
-                  class="q-mb-md"
                   outlined
                   v-model="title"
                   type="text"
@@ -63,6 +61,21 @@
                 />
               </div>
             </div>
+            <div class="row q-mb-md">
+              <div class="col q-mr-xs">
+                <q-input outlined v-model="date" type="date" label="date du début" />
+              </div>
+              <div class="col">
+                <q-input outlined v-model="time" type="time" label="heure du début" />
+              </div>
+            </div>
+            <q-input
+              label="Déscription détaillés"
+              type="textarea"
+              v-model="title"
+              outlined
+              autogrow
+            />
           </q-page>
         </q-page-container>
 
@@ -88,6 +101,8 @@ const model = defineModel<boolean>()
 const title = ref<string>()
 const options = ref<string[]>(['Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'])
 const select = ref<string>()
+const date = ref()
+const time = ref()
 </script>
 
 <style scoped>
