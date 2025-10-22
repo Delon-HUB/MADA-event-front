@@ -1,7 +1,7 @@
 <template>
-  <q-layout container style="height: 100vh; background-color: #f1efe3">
+  <q-layout class="layout" container>
     <q-page-container>
-      <q-page class="q-pa-md">
+      <q-page>
         <router-view />
       </q-page>
     </q-page-container>
@@ -97,6 +97,10 @@ onBeforeMount(async () => {
 </script>
 <style scoped>
 @import url('https://fonts.cdnfonts.com/css/vtks-caveirada');
+.layout {
+  height: 100vh;
+  background-color: #f1efe3;
+}
 
 .toolbar {
   display: flex;
