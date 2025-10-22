@@ -8,6 +8,7 @@ import {
 import { AUTH_ROUTER } from './auth'
 import MainLayout from '@/layouts/MainLayout.vue'
 import { useAuthStore } from '@/stores/Auth.store'
+import { HOME_ROUTER } from './home'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,7 +17,7 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       meta: { requireAuth: true },
-      children: [],
+      children: [...HOME_ROUTER],
     },
     {
       path: '/auth',
