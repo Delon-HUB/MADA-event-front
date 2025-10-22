@@ -4,7 +4,7 @@ import { errorForFrenchUser } from '@/utils/errorForHumain'
 import axios, { AxiosError } from 'axios'
 import { Notify } from 'quasar'
 
-let secureAPI = axios.create({
+const secureAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',

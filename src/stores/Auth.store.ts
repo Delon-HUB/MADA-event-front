@@ -1,7 +1,6 @@
 import { publicAPI, secureAPI } from '@/instances/axios'
 import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
-import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
