@@ -3,7 +3,14 @@
     <div class="row text-h6 text-bold">
       <div class="col">Mes événements</div>
       <div class="col text-right">
-        <q-btn no-caps flat color="positive" icon="add" label="Créer" />
+        <q-btn
+          no-caps
+          flat
+          color="positive"
+          icon="add_circle"
+          label="Créer"
+          @click="() => (show = true)"
+        />
       </div>
     </div>
     <q-tabs no-caps v-model="tab" indicator-color="positive" align="justify">
@@ -14,27 +21,33 @@
 
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
-        <div class="text-h6">Mails</div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis reiciendis, voluptate, eius
+        saepe dignissimos recusandae dolorem velit sed soluta voluptatibus quod id iure a
+        consequuntur modi odit rem maiores illo.
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        <div class="text-h6">Alarms</div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem, aut obcaecati est cum
+        harum ea excepturi doloribus quae voluptas sequi at, aliquam provident. Error architecto,
+        vero sunt ipsa aliquid impedit.
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
-        <div class="text-h6">Movies</div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, harum officia beatae
+        voluptatem aliquam temporibus eveniet quod tempora. Repellendus magni reprehenderit eos sed
+        obcaecati consequuntur nostrum aperiam quisquam quam. Ipsam.
       </q-tab-panel>
     </q-tab-panels>
+    <CreateEvent v-model="show" />
   </q-page>
 </template>
 
 <script setup lang="ts">
+import CreateEvent from '@/components/CreateEvent.vue'
 import { ref } from 'vue'
 
 const tab = ref('tab1')
+const show = ref<boolean>(false)
 </script>
 
 <style scoped>
