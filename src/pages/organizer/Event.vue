@@ -14,11 +14,11 @@
       </div>
     </div>
     <q-tabs no-caps v-model="tab" indicator-color="positive" align="justify">
-      <q-tab name="tab1" label="À venir" />
-      <q-tab name="tab2" label="En cours" />
-      <q-tab name="tab3" label="Terminé" />
+      <q-tab name="tab1" label="Tous" />
+      <q-tab name="tab2" label="À venir" />
+      <q-tab name="tab3" label="En cours" />
+      <q-tab name="tab4" label="Terminé" />
     </q-tabs>
-
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis reiciendis, voluptate, eius
@@ -33,6 +33,11 @@
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, harum officia beatae
+        voluptatem aliquam temporibus eveniet quod tempora. Repellendus magni reprehenderit eos sed
+        obcaecati consequuntur nostrum aperiam quisquam quam. Ipsam.
+      </q-tab-panel>
+      <q-tab-panel name="tab4">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, harum officia beatae
         voluptatem aliquam temporibus eveniet quod tempora. Repellendus magni reprehenderit eos sed
         obcaecati consequuntur nostrum aperiam quisquam quam. Ipsam.
