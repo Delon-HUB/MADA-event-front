@@ -46,8 +46,8 @@
                 <q-select
                   class="q-mb-md"
                   outlined
-                  v-model="select"
-                  :options="options"
+                  v-model="categorieSelected"
+                  :options="categories"
                   label="Catégorie"
                 />
                 <div class="row q-mb-md">
@@ -67,26 +67,31 @@
                 color="dark"
                 done-color="positive"
               >
-                <div class="row q-mb-md">
-                  <div class="col q-mr-xs">
-                    <q-select outlined v-model="select" :options="options" label="Ville" />
-                  </div>
-                  <div class="col">
-                    <q-input
-                      color="green"
-                      outlined
-                      v-model="title"
-                      type="text"
-                      label="adresse"
-                      :rules="[
-                        () =>
-                          /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(title || '') ||
-                          'Veuillez entrer un titre valide',
-                      ]"
-                      lazy-rules
-                    />
-                  </div>
-                </div>
+                <q-select
+                  v-model="localisationSelected"
+                  use-input
+                  outlined
+                  hide-selected
+                  fill-input
+                  input-debounce="0"
+                  label="Ville"
+                  :options="options"
+                  @filter="filterFn"
+                  class="q-mb-md"
+                />
+                <q-input
+                  color="green"
+                  outlined
+                  v-model="title"
+                  type="text"
+                  label="adresse"
+                  :rules="[
+                    () =>
+                      /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(title || '') ||
+                      'Veuillez entrer un titre valide',
+                  ]"
+                  lazy-rules
+                />
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
                     <q-input outlined v-model="date" type="date" label="date du début" />
@@ -120,6 +125,26 @@
                   outlined
                   autogrow
                 />
+
+                <q-select
+                  filled
+                  v-model="localisationSelected"
+                  clearable
+                  use-input
+                  hide-selected
+                  fill-input
+                  input-debounce="0"
+                  label="Autoselect after filtering"
+                  :options="options"
+                  @filter="filterFn"
+                  style="width: 250px; height: 250px"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey"> No results </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
               </q-step>
             </q-stepper>
           </q-page>
@@ -152,16 +177,51 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ECategory } from '@/enums/ECategory'
+import { secureAPI } from '@/instances/axios'
+import type { ICreateDistrictDto } from '@/interfaces/create-district.dto'
+import { onBeforeMount, ref } from 'vue'
 
-const model = defineModel<boolean>()
 const step = ref<number>(1)
+const model = defineModel<boolean>()
+const categories = Object.entries(ECategory).map((val) => val[1])
+const localisationList = ref<string[]>([])
+onBeforeMount(async () => {
+  const districts = (await secureAPI.post('/localisation/district')).data as ICreateDistrictDto[]
+  const districtStrings = districts.map((district) => {
+    console.log(district.regionId.provinceId.province)
+    const districtString = [
+      district.regionId.provinceId.province,
+      district.regionId.region,
+      district.district,
+    ]
+    return districtString.join(',')
+  })
+  localisationList.value = districtStrings
+})
 
 const title = ref<string>()
-const options = ref<string[]>(['Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'])
-const select = ref<string>()
+const categorieSelected = ref<string>()
+const localisationSelected = ref<string>()
+
 const date = ref()
 const time = ref()
+
+const options = ref<string[]>(localisationList.value)
+function filterFn(val: string, update: CallableFunction) {
+  if (!val.trim()) {
+    update(() => {
+      options.value = localisationList.value
+    })
+    return
+  }
+
+  update(() => {
+    options.value = localisationList.value.filter(
+      (v: string) => v.toLowerCase().indexOf(val.toLowerCase()) > -1,
+    )
+  })
+}
 </script>
 
 <style scoped>
