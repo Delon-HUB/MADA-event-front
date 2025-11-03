@@ -29,6 +29,7 @@
                   label="Image de couverture"
                   flat
                   v-model="newEvent.photo"
+                  hide-upload-btn
                 />
                 <q-input
                   color="green"
@@ -144,6 +145,7 @@
           <q-stepper-navigation class="row">
             <q-btn
               class="col q-mr-sm"
+              v-if="step != 1"
               @click="step > 1 ? step-- : step"
               color="dark"
               label="Retour"
@@ -228,7 +230,6 @@ const newEvent = reactive<IEvent>({
   startDate: new Date(),
   endDate: new Date(),
   price: 0,
-  ticketsAvailable: 0,
   participants: [],
 })
 
