@@ -104,18 +104,18 @@
                 />
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
-                    <q-input outlined v-model="date" type="date" label="date du début" />
+                    <q-input outlined v-model="startDate" type="date" label="date du début" />
                   </div>
                   <div class="col">
-                    <q-input outlined v-model="time" type="time" label="heure du début" />
+                    <q-input outlined v-model="startTime" type="time" label="heure du début" />
                   </div>
                 </div>
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
-                    <q-input outlined v-model="date" type="date" label="date de fin" />
+                    <q-input outlined v-model="endDate" type="date" label="date de fin" />
                   </div>
                   <div class="col">
-                    <q-input outlined v-model="time" type="time" label="heure de fin" />
+                    <q-input outlined v-model="endTime" type="time" label="heure de fin" />
                   </div>
                 </div>
               </q-step>
@@ -231,10 +231,30 @@ const newEvent = reactive<IEvent>({
   ticketsAvailable: 0,
   participants: [],
 })
-const date = ref()
-const time = ref()
+
+//date & time
+const startDate = ref<string>()
+const startTime = ref<string>()
+const endDate = ref<string>()
+const endTime = ref<string>()
 
 const createEvent = () => {
+  //start
+  const startHours = parseInt(startTime.value?.split(':')[0] || '')
+  const startMinutes = parseInt(startTime.value?.split(':')[1] || '')
+  const _startDate = new Date(startDate.value || '')
+  _startDate.setHours(startHours)
+  _startDate.setMinutes(startMinutes)
+  //end
+  const endHours = parseInt(endTime.value?.split(':')[0] || '')
+  const endMinutes = parseInt(endTime.value?.split(':')[1] || '')
+  const _endDate = new Date(endDate.value || '')
+  _endDate.setHours(endHours)
+  _endDate.setMinutes(endMinutes)
+
+  newEvent.startDate = _startDate
+  newEvent.endDate = _endDate
+
   console.log(newEvent)
 }
 </script>
