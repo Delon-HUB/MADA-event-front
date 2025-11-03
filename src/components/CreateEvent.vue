@@ -179,7 +179,7 @@
 <script setup lang="ts">
 import { ECategory } from '@/enums/ECategory'
 import { secureAPI } from '@/instances/axios'
-import type { ICreateDistrictDto } from '@/interfaces/create-district.dto'
+import type { ICreateDistrictDto } from '@/interfaces/IDistrict'
 import { onBeforeMount, ref } from 'vue'
 
 const step = ref<number>(1)
@@ -189,7 +189,6 @@ const localisationList = ref<string[]>([])
 onBeforeMount(async () => {
   const districts = (await secureAPI.post('/localisation/district')).data as ICreateDistrictDto[]
   const districtStrings = districts.map((district) => {
-    console.log(district.regionId.provinceId.province)
     const districtString = [
       district.regionId.provinceId.province,
       district.regionId.region,

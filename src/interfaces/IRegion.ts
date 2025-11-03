@@ -1,4 +1,4 @@
-import type { ICreateProvinceDto } from './create-province.dto'
+import type { ICreateProvinceDto } from './IProvince'
 
 export interface ICreateRegionDto {
   _id?: string
