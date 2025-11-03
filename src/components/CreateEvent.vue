@@ -28,8 +28,11 @@
                   class="fit background-page q-mb-md"
                   label="Image de couverture"
                   flat
-                  v-model="newEvent.photo"
                   hide-upload-btn
+                  :auto-upload="false"
+                  accept="image/*"
+                  @added="(files) => (file = (files as File[])[0])"
+                  @removed="() => (file = undefined)"
                 />
                 <q-input
                   color="green"
@@ -105,18 +108,23 @@
                 />
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
-                    <q-input outlined v-model="startDate" type="date" label="date du début" />
+                    <q-input outlined v-model="startDateString" type="date" label="date du début" />
                   </div>
                   <div class="col">
-                    <q-input outlined v-model="startTime" type="time" label="heure du début" />
+                    <q-input
+                      outlined
+                      v-model="startTimeString"
+                      type="time"
+                      label="heure du début"
+                    />
                   </div>
                 </div>
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
-                    <q-input outlined v-model="endDate" type="date" label="date de fin" />
+                    <q-input outlined v-model="endDateString" type="date" label="date de fin" />
                   </div>
                   <div class="col">
-                    <q-input outlined v-model="endTime" type="time" label="heure de fin" />
+                    <q-input outlined v-model="endTimeString" type="time" label="heure de fin" />
                   </div>
                 </div>
               </q-step>
@@ -188,7 +196,7 @@ import { onBeforeMount, reactive, ref } from 'vue'
 const step = ref<number>(1)
 const model = defineModel<boolean>()
 
-//location
+// INITIALIZATION
 const localisationList = ref<string[]>([])
 onBeforeMount(async () => {
   const districts = (await secureAPI.post('/localisation/district')).data as ICreateDistrictDto[]
@@ -220,7 +228,7 @@ function filterFn(val: string, update: CallableFunction) {
 
 const categories = Object.entries(ECategory).map((val) => val[1])
 
-//data
+// DATA
 const newEvent = reactive<IEvent>({
   title: '',
   category: '',
@@ -232,31 +240,30 @@ const newEvent = reactive<IEvent>({
   price: 0,
   participants: [],
 })
+const startDateString = ref<string>()
+const startTimeString = ref<string>()
+const endDateString = ref<string>()
+const endTimeString = ref<string>()
 
-//date & time
-const startDate = ref<string>()
-const startTime = ref<string>()
-const endDate = ref<string>()
-const endTime = ref<string>()
+const file = ref<File>()
 
+// MÉTHODE
 const createEvent = () => {
-  //start
-  const startHours = parseInt(startTime.value?.split(':')[0] || '')
-  const startMinutes = parseInt(startTime.value?.split(':')[1] || '')
-  const _startDate = new Date(startDate.value || '')
-  _startDate.setHours(startHours)
-  _startDate.setMinutes(startMinutes)
-  //end
-  const endHours = parseInt(endTime.value?.split(':')[0] || '')
-  const endMinutes = parseInt(endTime.value?.split(':')[1] || '')
-  const _endDate = new Date(endDate.value || '')
-  _endDate.setHours(endHours)
-  _endDate.setMinutes(endMinutes)
+  newEvent.startDate = formatDate(startDateString.value!, startTimeString.value!)
+  newEvent.endDate = formatDate(endDateString.value!, endTimeString.value!)
 
-  newEvent.startDate = _startDate
-  newEvent.endDate = _endDate
+  console.log(file.value)
+}
 
-  console.log(newEvent)
+// UTILS
+const formatDate = (dateString: string, timeString: string): Date => {
+  const hours = parseInt(timeString?.split(':')[0] || '')
+  const minutes = parseInt(timeString?.split(':')[1] || '')
+  const date = new Date(dateString || '')
+  date.setHours(hours)
+  date.setMinutes(minutes)
+
+  return date
 }
 </script>
 
