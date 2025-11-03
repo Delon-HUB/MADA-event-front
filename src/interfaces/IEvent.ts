@@ -12,7 +12,7 @@ export interface IEvent {
   endDate: Date
   price: number
   capacity?: number
-  ticketsAvailable: number
+  ticketsAvailable?: number
   participants: IUser[]
   createdAt?: Date
   updatedAt?: Date
