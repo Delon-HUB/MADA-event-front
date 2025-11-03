@@ -26,19 +26,19 @@
                   text-color="dark"
                   color="grey"
                   class="fit background-page q-mb-md"
-                  url="http://localhost:4444/upload"
                   label="Image de couverture"
                   flat
+                  v-model="newEvent.photo"
                 />
                 <q-input
                   color="green"
                   outlined
-                  v-model="title"
+                  v-model="newEvent.title"
                   type="text"
                   label="Titre de l'événement"
                   :rules="[
                     () =>
-                      /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(title || '') ||
+                      /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(newEvent.title || '') ||
                       'Veuillez entrer un titre valide',
                   ]"
                   lazy-rules
@@ -46,16 +46,26 @@
                 <q-select
                   class="q-mb-md"
                   outlined
-                  v-model="categorieSelected"
+                  v-model="newEvent.category"
                   :options="categories"
                   label="Catégorie"
                 />
                 <div class="row q-mb-md">
                   <div class="col q-mr-xs">
-                    <q-input outlined v-model="date" type="number" label="Prix (Ariary)" />
+                    <q-input
+                      outlined
+                      v-model="newEvent.price"
+                      type="number"
+                      label="Prix (Ariary)"
+                    />
                   </div>
                   <div class="col">
-                    <q-input outlined v-model="time" type="number" label="Nombre de place" />
+                    <q-input
+                      outlined
+                      v-model="newEvent.capacity"
+                      type="number"
+                      label="Nombre de place"
+                    />
                   </div>
                 </div>
               </q-step>
@@ -68,7 +78,7 @@
                 done-color="positive"
               >
                 <q-select
-                  v-model="localisationSelected"
+                  v-model="newEvent.location"
                   use-input
                   outlined
                   hide-selected
@@ -82,12 +92,12 @@
                 <q-input
                   color="green"
                   outlined
-                  v-model="title"
+                  v-model="newEvent.address"
                   type="text"
                   label="adresse"
                   :rules="[
                     () =>
-                      /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(title || '') ||
+                      /^[A-ZÀ-Ýa-zà-ÿ'\-\s]{1,49}$/.test(newEvent.address || '') ||
                       'Veuillez entrer un titre valide',
                   ]"
                   lazy-rules
@@ -121,30 +131,10 @@
                 <q-input
                   label="Déscription détaillés"
                   type="textarea"
-                  v-model="title"
+                  v-model="newEvent.description"
                   outlined
                   autogrow
                 />
-
-                <q-select
-                  filled
-                  v-model="localisationSelected"
-                  clearable
-                  use-input
-                  hide-selected
-                  fill-input
-                  input-debounce="0"
-                  label="Autoselect after filtering"
-                  :options="options"
-                  @filter="filterFn"
-                  style="width: 250px; height: 250px"
-                >
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey"> No results </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
               </q-step>
             </q-stepper>
           </q-page>
@@ -166,7 +156,17 @@
               class="col"
               @click="step < 3 ? step++ : step"
               color="positive"
-              :label="step < 3 ? 'Continuer' : 'Publier'"
+              label="Continuer"
+              v-if="step < 3"
+              icon-right="arrow_circle_right"
+            />
+            <q-btn
+              no-caps
+              class="col"
+              v-else
+              @click="createEvent"
+              color="positive"
+              label="Publier"
               icon-right="arrow_circle_right"
             />
           </q-stepper-navigation>
@@ -180,11 +180,13 @@
 import { ECategory } from '@/enums/ECategory'
 import { secureAPI } from '@/instances/axios'
 import type { ICreateDistrictDto } from '@/interfaces/IDistrict'
-import { onBeforeMount, ref } from 'vue'
+import type { IEvent } from '@/interfaces/IEvent'
+import { onBeforeMount, reactive, ref } from 'vue'
 
 const step = ref<number>(1)
 const model = defineModel<boolean>()
-const categories = Object.entries(ECategory).map((val) => val[1])
+
+//location
 const localisationList = ref<string[]>([])
 onBeforeMount(async () => {
   const districts = (await secureAPI.post('/localisation/district')).data as ICreateDistrictDto[]
@@ -198,14 +200,6 @@ onBeforeMount(async () => {
   })
   localisationList.value = districtStrings
 })
-
-const title = ref<string>()
-const categorieSelected = ref<string>()
-const localisationSelected = ref<string>()
-
-const date = ref()
-const time = ref()
-
 const options = ref<string[]>(localisationList.value)
 function filterFn(val: string, update: CallableFunction) {
   if (!val.trim()) {
@@ -220,6 +214,28 @@ function filterFn(val: string, update: CallableFunction) {
       (v: string) => v.toLowerCase().indexOf(val.toLowerCase()) > -1,
     )
   })
+}
+
+const categories = Object.entries(ECategory).map((val) => val[1])
+
+//data
+const newEvent = reactive<IEvent>({
+  title: '',
+  category: '',
+  photo: '',
+  location: '',
+  address: '',
+  startDate: new Date(),
+  endDate: new Date(),
+  price: 0,
+  ticketsAvailable: 0,
+  participants: [],
+})
+const date = ref()
+const time = ref()
+
+const createEvent = () => {
+  console.log(newEvent)
 }
 </script>
 
