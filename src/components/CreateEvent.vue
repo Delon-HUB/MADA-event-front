@@ -191,6 +191,7 @@ import { ECategory } from '@/enums/ECategory'
 import { secureAPI } from '@/instances/axios'
 import type { ICreateDistrictDto } from '@/interfaces/IDistrict'
 import type { IEvent } from '@/interfaces/IEvent'
+import { Axios } from 'axios'
 import { onBeforeMount, reactive, ref } from 'vue'
 
 const step = ref<number>(1)
@@ -248,11 +249,20 @@ const endTimeString = ref<string>()
 const file = ref<File>()
 
 // MÉTHODE
-const createEvent = () => {
+const createEvent = async () => {
   newEvent.startDate = formatDate(startDateString.value!, startTimeString.value!)
   newEvent.endDate = formatDate(endDateString.value!, endTimeString.value!)
 
-  console.log(file.value)
+  const formData = new FormData()
+  if (file.value) formData.append('image', file.value)
+  ;(Object.keys(newEvent) as (keyof IEvent)[]).forEach((key) =>
+    formData.append(key, newEvent[key] as string),
+  )
+  const api = new Axios({
+    baseURL: import.meta.env.VITE_API_URL,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  await api.post('/event', formData)
 }
 
 // UTILS
