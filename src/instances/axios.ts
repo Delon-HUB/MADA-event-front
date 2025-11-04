@@ -13,6 +13,15 @@ let secureAPI = axios.create({
   },
 })
 
+secureAPI.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    config.headers['Content-Type'] = 'multipart/form-data'
+  } else {
+    config.headers['Content-Type'] = 'application/json'
+  }
+  return config
+})
+
 const publicAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
