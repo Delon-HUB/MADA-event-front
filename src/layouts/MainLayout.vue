@@ -76,11 +76,15 @@ import { ERole } from '@/enums/ERole'
 import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
+import { useEventStore } from '@/stores/Event.store'
 import { useUserStore } from '@/stores/User.store'
 import { onBeforeMount, ref } from 'vue'
 
 let currentUser = ref<Partial<IUser>>({})
 onBeforeMount(async () => {
+  const $eventStore = useEventStore()
+  $eventStore.init()
+
   const $userStore = useUserStore()
   const user = (await $userStore.getMyInformation()).data as Partial<IUser>
   if (!user) router.push('/auth/login')
