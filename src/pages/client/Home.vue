@@ -7,8 +7,16 @@
 import Event from '@/components/Event.vue'
 import type { IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const $eventStore = useEventStore()
-const events = ref<IEvent[]>($eventStore.getEvents())
+
+const events = ref<IEvent[]>([])
+events.value = $eventStore.getEvents().value
+watch(
+  () => $eventStore.events,
+  () => {
+    events.value = $eventStore.getEvents().value
+  },
+)
 </script>

@@ -82,23 +82,21 @@ import { onBeforeMount, ref } from 'vue'
 
 let currentUser = ref<Partial<IUser>>({})
 onBeforeMount(async () => {
-  const $eventStore = useEventStore()
-  $eventStore.init()
-
   const $userStore = useUserStore()
-  const user = (await $userStore.getMyInformation()).data as Partial<IUser>
-  if (!user) router.push('/auth/login')
-  currentUser.value = user
-  switch (user.role) {
+  await $userStore.init()
+  if (!$userStore.getCurrentUser()) router.push('/auth/login')
+  currentUser.value = $userStore.getCurrentUser()
+  switch ($userStore.getCurrentUser().role) {
     case ERole.CLIENT:
       router.push('/client')
-      $eventStore.fetchAll()
       break
     case ERole.ORGANIZER:
       router.push('/organizer')
-      $eventStore.getMyEvents()
       break
   }
+
+  const $eventStore = useEventStore()
+  await $eventStore.init()
 })
 </script>
 <style scoped>
