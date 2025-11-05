@@ -1,23 +1,11 @@
 <template>
   <q-list>
-    <Event :event="event" v-for="event in all" class="q-ma-xs" />
+    <Event :event="event" v-for="event in $eventStore.all" class="q-ma-xs" />
   </q-list>
 </template>
 <script setup lang="ts">
 import Event from '@/components/Event.vue'
-import type { IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
-import { ref, watch } from 'vue'
 
 const $eventStore = useEventStore()
-
-const all = ref<IEvent[]>([])
-
-all.value = $eventStore.getEvents().value
-watch(
-  () => $eventStore.events,
-  () => {
-    all.value = $eventStore.getEvents().value
-  },
-)
 </script>

@@ -14,7 +14,7 @@
           <q-btn flat no-caps dense icon="receipt" stack label="Mes billets" />
 
           <q-btn flat no-caps dense icon="notifications" stack label="Notification"
-            ><q-badge color="red" floating>3</q-badge></q-btn
+            ><q-badge color="red" floating rounded transparent>3</q-badge></q-btn
           >
           <q-btn
             flat
