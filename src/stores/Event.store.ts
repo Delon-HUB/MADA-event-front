@@ -4,10 +4,21 @@ import type { IEvent } from '@/interfaces/IEvent'
 import { defineStore } from 'pinia'
 import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import isBetween from 'dayjs/plugin/isBetween'
+import 'dayjs/locale/fr'
+
+dayjs.extend(relativeTime)
+dayjs.extend(isBetween)
+dayjs.locale('fr')
 
 export const useEventStore = defineStore('event', () => {
-  let events = ref<IEvent[]>([])
+  let all = ref<IEvent[]>([])
+  let coming = ref<IEvent[]>([])
+  let inProgress = ref<IEvent[]>([])
+  let terminated = ref<IEvent[]>([])
 
   const init = async () => {
     const $userStore = useUserStore()
@@ -28,22 +39,40 @@ export const useEventStore = defineStore('event', () => {
     socket.on('disconnect', () => console.log(`${socket.id} connected`))
 
     socket.on('newEvent', (event: IEvent) => {
-      if ($userStore.getCurrentUser().role == ERole.CLIENT) events.value.push(event)
-      else if ($userStore.getCurrentUser()._id === event.ownerId) events.value.push(event)
+      if ($userStore.getCurrentUser().role == ERole.CLIENT) all.value.push(event)
+      else if ($userStore.getCurrentUser()._id === event.ownerId) all.value.push(event)
     })
   }
 
   const fetchAll = async () => {
     const response = await secureAPI.post('/event/all')
-    events.value = response.data as IEvent[]
+    all.value = response.data as IEvent[]
   }
 
   const getMyEvents = async () => {
     const response = await secureAPI.post('/event/mine')
-    events.value = response.data as IEvent[]
+    all.value = response.data as IEvent[]
   }
 
-  const getEvents = () => events
+  watch(
+    () => all.value,
+    () => {
+      console.log('all changed')
+      repartition(all.value)
+    },
+  )
 
-  return { init, getMyEvents, fetchAll, getEvents, events }
+  const repartition = (events: IEvent[]) => {
+    const currentDate = dayjs()
+    events.forEach((event) => {
+      if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
+        inProgress.value.push(event)
+      else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
+      else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
+    })
+  }
+
+  const getEvents = () => all
+
+  return { init, getMyEvents, fetchAll, getEvents, all, inProgress, coming, terminated }
 })

@@ -23,18 +23,18 @@
     </q-header>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
-        <Event v-for="event in all" :event="event" class="q-mb-xs" />
+        <Event v-for="event in $eventStore.all" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        <Event v-for="event in coming" :event="event" class="q-mb-xs" />
+        <Event v-for="event in $eventStore.coming" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
-        <Event v-for="event in inProgress" :event="event" class="q-mb-xs" />
+        <Event v-for="event in $eventStore.inProgress" :event="event" class="q-mb-xs" />
       </q-tab-panel>
       <q-tab-panel name="tab4">
-        <Event v-for="event in terminated" :event="event" class="q-mb-xs" />
+        <Event v-for="event in $eventStore.terminated" :event="event" class="q-mb-xs" />
       </q-tab-panel>
     </q-tab-panels>
     <CreateEvent v-model="show" />
@@ -44,53 +44,12 @@
 <script setup lang="ts">
 import CreateEvent from '@/components/CreateEvent.vue'
 import Event from '@/components/Event.vue'
-import type { IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
-import { ref, watch } from 'vue'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import isBetween from 'dayjs/plugin/isBetween'
-
-import 'dayjs/locale/fr'
+import { ref } from 'vue'
 
 const $eventStore = useEventStore()
 const tab = ref('tab1')
 const show = ref<boolean>(false)
-
-dayjs.extend(relativeTime)
-dayjs.extend(isBetween)
-dayjs.locale('fr')
-
-const all = ref<IEvent[]>([])
-const inProgress = ref<IEvent[]>([])
-const coming = ref<IEvent[]>([])
-const terminated = ref<IEvent[]>([])
-
-all.value = $eventStore.getEvents().value
-watch(
-  () => $eventStore.events,
-  () => {
-    all.value = $eventStore.getEvents().value
-    inProgress.value = []
-    coming.value = []
-    terminated.value = []
-
-    const currentDate = dayjs()
-    all.value.forEach((event) => {
-      if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
-        inProgress.value.push(event)
-      else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
-      else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
-    })
-  },
-)
-
-const currentDate = dayjs()
-all.value.forEach((event) => {
-  if (currentDate.isBetween(event.startDate, event.endDate)) inProgress.value.push(event)
-  else if (currentDate.isBefore(event.startDate)) coming.value.push(event)
-  else if (currentDate.isAfter(event.startDate)) terminated.value.push(event)
-})
 </script>
 
 <style scoped>
