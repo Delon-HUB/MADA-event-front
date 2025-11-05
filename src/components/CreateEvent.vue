@@ -258,11 +258,8 @@ const createEvent = async () => {
   ;(Object.keys(newEvent) as (keyof IEvent)[]).forEach((key) =>
     formData.append(key, newEvent[key] as string),
   )
-  const api = new Axios({
-    baseURL: import.meta.env.VITE_API_URL,
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
-  await api.post('/event', formData)
+  const response = await secureAPI.post('/event', formData)
+  if (response.status < 400) model.value = false
 }
 
 // UTILS
