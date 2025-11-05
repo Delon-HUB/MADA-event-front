@@ -30,7 +30,7 @@
     </div>
     <q-card-actions>
       <q-btn no-caps flat color="positive" icon="receipt"
-        >Réserver
+        >Acheter
         <span class="text-dark"
           >({{ props.event.price <= 0 ? 'gratuit' : props.event.price + 'ar' }})</span
         ></q-btn

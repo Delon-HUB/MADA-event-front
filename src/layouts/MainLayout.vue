@@ -10,22 +10,13 @@
       <q-toolbar>
         <q-space></q-space>
         <div class="toolbar" v-if="currentUser.role == ERole.CLIENT">
+          <q-btn flat no-caps dense icon="home" stack label="Découvrir" :to="'/client/home'" />
+          <q-btn flat no-caps dense icon="receipt" stack label="Mes billets" />
+
+          <q-btn flat no-caps dense icon="notifications" stack label="Notification" />
           <q-btn
             flat
             no-caps
-            round
-            dense
-            icon="home"
-            stack
-            label="Découvrir"
-            :to="'/client/home'"
-          />
-          <q-btn flat no-caps round dense icon="receipt" stack label="Réservation" />
-          <q-btn flat no-caps round dense icon="notifications" stack label="Notification" />
-          <q-btn
-            flat
-            no-caps
-            round
             dense
             icon="person"
             stack
@@ -37,7 +28,6 @@
           <q-btn
             flat
             no-caps
-            round
             dense
             icon="timeline"
             stack
@@ -47,18 +37,16 @@
           <q-btn
             flat
             no-caps
-            round
             dense
             icon="event"
             stack
-            label="Événement"
+            label="Mes événement"
             :to="'/organizer/event'"
           />
-          <q-btn flat no-caps round dense icon="notifications" stack label="Notification" />
+          <q-btn flat no-caps dense icon="notifications" stack label="Notification" />
           <q-btn
             flat
             no-caps
-            round
             dense
             icon="person"
             stack
