@@ -27,8 +27,6 @@ export const useEventStore = defineStore('event', () => {
   const fetchAll = async () => {
     const response = await secureAPI.post('/event/all')
     events = response.data as IEvent[]
-
-    console.log(events)
   }
 
   const getEvents = () => events
