@@ -35,5 +35,5 @@ export const useEventStore = defineStore('event', () => {
 
   const getEvents = () => events
 
-  return { init, getEvents, events }
+  return { init, getMyEvents, fetchAll, getEvents, events }
 })

@@ -92,9 +92,11 @@ onBeforeMount(async () => {
   switch (user.role) {
     case ERole.CLIENT:
       router.push('/client')
+      $eventStore.fetchAll()
       break
     case ERole.ORGANIZER:
       router.push('/organizer')
+      $eventStore.getMyEvents()
       break
   }
 })

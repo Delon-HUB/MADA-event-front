@@ -50,7 +50,7 @@ import CreateEvent from '@/components/CreateEvent.vue'
 import Event from '@/components/Event.vue'
 import type { IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const $eventStore = useEventStore()
 const tab = ref('tab1')
