@@ -15,22 +15,30 @@
       <q-item-section class="text-right text-bold">
         <q-item-label>
           <q-icon color="green-8" name="payments" />
-          {{ props.event.price <= 0 ? 'gratuit' : props.event.price + 'ar' }}</q-item-label
+          {{ status }}</q-item-label
         >
       </q-item-section>
     </q-item>
     <q-img v-if="props.event.photo" :src="photo" :ratio="16 / 9" />
-    <div class="row items-center q-mx-xs">
-      <p class="text-h6 text-bold"><q-icon name="event" />{{ event.title }}</p>
+    <div class="row q-mx-xs">
+      <p class="text-h6 text-bold">{{ event.title }}</p>
       <q-space />
       <p><q-icon name="place" color="red" />{{ province }}</p>
+      <p>
+        <q-icon name="calendar_month" />
+        {{ new Date(event.startDate).toLocaleDateString() }}
+      </p>
     </div>
     <q-card-actions>
-      <q-btn no-caps flat round color="positive" icon="receipt" label="Reserver" />
+      <q-btn no-caps flat color="positive" icon="receipt"
+        >Réserver
+        <span class="text-dark"
+          >({{ props.event.price <= 0 ? 'gratuit' : props.event.price + 'ar' }})</span
+        ></q-btn
+      >
       <q-space />
       <q-btn
         color="grey"
-        round
         flat
         dense
         no-caps
@@ -66,6 +74,17 @@ const props = defineProps<{ event: IEvent }>()
 const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`)
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
+
+const getStatus = () => {
+  let status = ''
+  const currentDate = dayjs()
+  if (currentDate.isBetween(dayjs(props.event.startDate), dayjs(props.event.endDate)))
+    status = 'Encours'
+  else if (currentDate.isBefore(dayjs(props.event.startDate))) status = 'À venir'
+  else if (currentDate.isAfter(dayjs(props.event.startDate))) status = 'Términé'
+  return status
+}
+const status = ref<string>(getStatus())
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)

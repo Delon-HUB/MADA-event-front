@@ -21,24 +21,18 @@
     </q-tabs>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
-        <Event v-for="event in events" :event="event" class="q-mb-xs" />
+        <Event v-for="event in all" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium quae commodi delectus
-        officiis repellat voluptatibus error, voluptatum voluptate consectetur, cum corrupti iure
-        amet corporis excepturi tempore odit, sed laborum ipsa.
+        <Event v-for="event in coming" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, harum officia beatae
-        voluptatem aliquam temporibus eveniet quod tempora. Repellendus magni reprehenderit eos sed
-        obcaecati consequuntur nostrum aperiam quisquam quam. Ipsam.
+        <Event v-for="event in inProgress" :event="event" class="q-mb-xs" />
       </q-tab-panel>
       <q-tab-panel name="tab4">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, harum officia beatae
-        voluptatem aliquam temporibus eveniet quod tempora. Repellendus magni reprehenderit eos sed
-        obcaecati consequuntur nostrum aperiam quisquam quam. Ipsam.
+        <Event v-for="event in terminated" :event="event" class="q-mb-xs" />
       </q-tab-panel>
     </q-tab-panels>
     <CreateEvent v-model="show" />
@@ -50,12 +44,51 @@ import CreateEvent from '@/components/CreateEvent.vue'
 import Event from '@/components/Event.vue'
 import type { IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import isBetween from 'dayjs/plugin/isBetween'
+
+import 'dayjs/locale/fr'
 
 const $eventStore = useEventStore()
 const tab = ref('tab1')
 const show = ref<boolean>(false)
-const events = ref<IEvent[]>($eventStore.getEvents())
+
+dayjs.extend(relativeTime)
+dayjs.extend(isBetween)
+dayjs.locale('fr')
+
+const all = ref<IEvent[]>([])
+const inProgress = ref<IEvent[]>([])
+const coming = ref<IEvent[]>([])
+const terminated = ref<IEvent[]>([])
+
+all.value = $eventStore.getEvents().value
+watch(
+  () => $eventStore.events,
+  () => {
+    all.value = $eventStore.getEvents().value
+    inProgress.value = []
+    coming.value = []
+    terminated.value = []
+
+    const currentDate = dayjs()
+    all.value.forEach((event) => {
+      if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
+        inProgress.value.push(event)
+      else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
+      else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
+    })
+  },
+)
+
+const currentDate = dayjs()
+all.value.forEach((event) => {
+  if (currentDate.isBetween(event.startDate, event.endDate)) inProgress.value.push(event)
+  else if (currentDate.isBefore(event.startDate)) coming.value.push(event)
+  else if (currentDate.isAfter(event.startDate)) terminated.value.push(event)
+})
 </script>
 
 <style scoped>

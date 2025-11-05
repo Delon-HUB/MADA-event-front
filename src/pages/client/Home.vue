@@ -1,6 +1,6 @@
 <template>
   <q-list>
-    <Event :event="event" v-for="event in events" class="q-ma-xs" />
+    <Event :event="event" v-for="event in all" class="q-ma-xs" />
   </q-list>
 </template>
 <script setup lang="ts">
@@ -11,12 +11,13 @@ import { ref, watch } from 'vue'
 
 const $eventStore = useEventStore()
 
-const events = ref<IEvent[]>([])
-events.value = $eventStore.getEvents().value
+const all = ref<IEvent[]>([])
+
+all.value = $eventStore.getEvents().value
 watch(
   () => $eventStore.events,
   () => {
-    events.value = $eventStore.getEvents().value
+    all.value = $eventStore.getEvents().value
   },
 )
 </script>
