@@ -8,11 +8,13 @@
       </q-item-section>
       <q-space />
       <q-item-section class="text-right text-bold">
-        <q-item-label> <q-icon name="place" color="red" />{{ province }} </q-item-label>
-        <q-item-label caption>
+        <q-item-label>
           <q-icon name="payments" color="green" />{{
             props.event.price <= 0 ? 'gratuit' : props.event.price + ' Ar'
           }}
+        </q-item-label>
+        <q-item-label caption>
+          {{ event.category }}
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -32,9 +34,7 @@
       </q-item-section>
       <q-space />
       <q-item-section class="text-right">
-        <q-item-label>
-          {{ status }}
-        </q-item-label>
+        <q-item-label> <q-icon name="place" color="red" />{{ province }} </q-item-label>
         <q-item-label overline class="text-bold">
           <q-icon name="calendar_month" />
           {{ new Date(event.startDate).toLocaleDateString() }}

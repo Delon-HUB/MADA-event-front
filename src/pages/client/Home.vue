@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-header bordered class="page q-pa-xs text-black">
+    <q-header bordered class="bg-white q-pa-xs text-black">
       <q-input
         outlined
         rounded
