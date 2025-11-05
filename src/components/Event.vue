@@ -1,6 +1,25 @@
 <template>
   <q-card flat bordered>
     <q-item>
+      <q-item-section class="text-bold">
+        <q-item-label>
+          <p class="text-h6 text-bold">{{ event.title }}</p>
+        </q-item-label>
+      </q-item-section>
+      <q-space />
+      <q-item-section class="text-right text-bold">
+        <q-item-label> <q-icon name="place" color="red" />{{ province }} </q-item-label>
+        <q-item-label caption>
+          <q-icon name="payments" color="green" />{{
+            props.event.price <= 0 ? 'gratuit' : props.event.price + ' Ar'
+          }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-img v-if="props.event.photo" :src="photo" :ratio="16 / 9" />
+
+    <q-item>
       <q-item-section avatar>
         <q-avatar>
           <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" />
@@ -12,29 +31,19 @@
         <q-item-label caption> {{ createdAt }} </q-item-label>
       </q-item-section>
       <q-space />
-      <q-item-section class="text-right text-bold">
-        <q-item-label class="text-grey">
+      <q-item-section class="text-right">
+        <q-item-label>
           {{ status }}
+        </q-item-label>
+        <q-item-label caption>
+          <q-icon name="calendar_month" />
+          {{ new Date(event.startDate).toLocaleDateString() }}
         </q-item-label>
       </q-item-section>
     </q-item>
-    <q-img v-if="props.event.photo" :src="photo" :ratio="16 / 9" />
-    <div class="row q-mx-xs">
-      <p class="text-h6 text-bold">{{ event.title }}</p>
-      <q-space />
-      <p><q-icon name="place" color="red" />{{ province }}</p>
-      <p>
-        <q-icon name="calendar_month" />
-        {{ new Date(event.startDate).toLocaleDateString() }}
-      </p>
-    </div>
+
     <q-card-actions>
-      <q-btn no-caps flat color="positive" icon="receipt"
-        >Acheter
-        <span class="text-dark"
-          >({{ props.event.price <= 0 ? 'gratuit' : props.event.price + 'ar' }})</span
-        ></q-btn
-      >
+      <q-btn no-caps flat color="positive" icon="receipt">Acheter</q-btn>
       <q-space />
       <q-btn
         flat
