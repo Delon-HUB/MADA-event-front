@@ -26,6 +26,7 @@ export const useEventStore = defineStore('event', () => {
 
     if ($userStore.getCurrentUser().role == ERole.CLIENT) await fetchAll()
     else if ($userStore.getCurrentUser().role == ERole.ORGANIZER) await getMyEvents()
+    all.value.forEach((event) => repartition(event))
 
     socket.connect()
     if (socket.connected) console.log(`${socket.id} connected`)
@@ -39,8 +40,13 @@ export const useEventStore = defineStore('event', () => {
     socket.on('disconnect', () => console.log(`${socket.id} connected`))
 
     socket.on('newEvent', (event: IEvent) => {
-      if ($userStore.getCurrentUser().role == ERole.CLIENT) all.value.push(event)
-      else if ($userStore.getCurrentUser()._id === event.ownerId) all.value.push(event)
+      const isClientOrOwner =
+        $userStore.getCurrentUser().role == ERole.CLIENT ||
+        $userStore.getCurrentUser()._id === event.ownerId
+      if (isClientOrOwner) {
+        all.value.push(event)
+        repartition(event)
+      }
     })
   }
 
@@ -54,22 +60,12 @@ export const useEventStore = defineStore('event', () => {
     all.value = response.data as IEvent[]
   }
 
-  watch(
-    () => all.value,
-    () => {
-      console.log('all changed')
-      repartition(all.value)
-    },
-  )
-
-  const repartition = (events: IEvent[]) => {
+  const repartition = (event: IEvent) => {
     const currentDate = dayjs()
-    events.forEach((event) => {
-      if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
-        inProgress.value.push(event)
-      else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
-      else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
-    })
+    if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
+      inProgress.value.push(event)
+    else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
+    else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
   }
 
   const getEvents = () => all

@@ -18,10 +18,10 @@
             v-model="$eventStore.coming.length"
             size="64px"
             :thickness="0.2"
-            color="light-blue"
+            color="black"
             center-color="light"
             track-color="grey-3"
-            ><span class="text-bold text-light-blue">{{ $eventStore.coming.length }}</span></q-knob
+            ><span class="text-bold text-black">{{ $eventStore.coming.length }}</span></q-knob
           >
           <p class="text-bold">À venir</p>
         </q-card>
