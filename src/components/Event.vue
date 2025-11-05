@@ -13,10 +13,9 @@
       </q-item-section>
       <q-space />
       <q-item-section class="text-right text-bold">
-        <q-item-label>
-          <q-icon color="green-8" name="payments" />
-          {{ status }}</q-item-label
-        >
+        <q-item-label class="text-grey">
+          {{ status }}
+        </q-item-label>
       </q-item-section>
     </q-item>
     <q-img v-if="props.event.photo" :src="photo" :ratio="16 / 9" />
@@ -38,7 +37,6 @@
       >
       <q-space />
       <q-btn
-        color="grey"
         flat
         dense
         no-caps
@@ -63,9 +61,11 @@ import type { IEvent } from '@/interfaces/IEvent'
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
 
 dayjs.extend(relativeTime)
+dayjs.extend(isBetween)
 dayjs.locale('fr')
 
 const expanded = ref(false)
