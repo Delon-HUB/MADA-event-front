@@ -178,6 +178,7 @@
               color="positive"
               label="Publier"
               icon-right="arrow_circle_right"
+              :loading="loading"
             />
           </q-stepper-navigation>
         </q-footer>
@@ -191,11 +192,11 @@ import { ECategory } from '@/enums/ECategory'
 import { secureAPI } from '@/instances/axios'
 import type { ICreateDistrictDto } from '@/interfaces/IDistrict'
 import type { IEvent } from '@/interfaces/IEvent'
-import { Axios } from 'axios'
 import { onBeforeMount, reactive, ref } from 'vue'
 
-const step = ref<number>(1)
 const model = defineModel<boolean>()
+const step = ref<number>(1)
+const loading = ref<boolean>(false)
 
 // INITIALIZATION
 const localisationList = ref<string[]>([])
@@ -250,6 +251,7 @@ const file = ref<File>()
 
 // MÉTHODE
 const createEvent = async () => {
+  loading.value = true
   newEvent.startDate = formatDate(startDateString.value!, startTimeString.value!)
   newEvent.endDate = formatDate(endDateString.value!, endTimeString.value!)
 
@@ -259,6 +261,7 @@ const createEvent = async () => {
     formData.append(key, newEvent[key] as string),
   )
   const response = await secureAPI.post('/event', formData)
+  loading.value = false
   if (response.status < 400) model.value = false
 }
 
