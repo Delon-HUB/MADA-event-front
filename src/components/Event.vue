@@ -67,5 +67,6 @@ const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
 
-const createdAt = dayjs(props.event.createdAt).fromNow()
+let createdAt = ref(dayjs(props.event.createdAt).fromNow())
+setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 </script>
