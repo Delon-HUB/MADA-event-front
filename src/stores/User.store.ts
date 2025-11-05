@@ -18,7 +18,6 @@ export const useUserStore = defineStore('user', () => {
 
   const setCurrentUser = (_user: Partial<IUser>) => {
     currentUser = _user
-    console.log(currentUser)
   }
 
   const getCurrentUser = () => {
