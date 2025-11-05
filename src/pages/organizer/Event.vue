@@ -1,24 +1,26 @@
 <template>
-  <q-page>
-    <div class="row text-h6 text-bold">
-      <div class="col">Mes événements</div>
-      <div class="col text-right">
-        <q-btn
-          no-caps
-          flat
-          color="positive"
-          icon="add_circle"
-          label="Créer"
-          @click="() => (show = true)"
-        />
+  <q-page class="page">
+    <q-header bordered class="page text-black">
+      <div class="row text-h6 text-bold">
+        <div class="col">Mes événements</div>
+        <div class="col text-right">
+          <q-btn
+            no-caps
+            flat
+            color="positive"
+            icon="add_circle"
+            label="Créer"
+            @click="() => (show = true)"
+          />
+        </div>
       </div>
-    </div>
-    <q-tabs no-caps v-model="tab" indicator-color="positive" align="justify">
-      <q-tab name="tab1" label="Tous" />
-      <q-tab name="tab2" label="À venir" />
-      <q-tab name="tab3" label="En cours" />
-      <q-tab name="tab4" label="Terminé" />
-    </q-tabs>
+      <q-tabs no-caps v-model="tab" indicator-color="positive" align="justify">
+        <q-tab name="tab1" label="Tous" />
+        <q-tab name="tab2" label="À venir" />
+        <q-tab name="tab3" label="En cours" />
+        <q-tab name="tab4" label="Terminé" />
+      </q-tabs>
+    </q-header>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
         <Event v-for="event in all" :event="event" class="q-mb-xs" />
