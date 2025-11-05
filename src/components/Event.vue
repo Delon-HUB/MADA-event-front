@@ -1,5 +1,5 @@
 <template>
-  <q-card class="my-card" flat bordered>
+  <q-card flat bordered>
     <q-item>
       <q-item-section avatar>
         <q-avatar>

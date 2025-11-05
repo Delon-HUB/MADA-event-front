@@ -7,10 +7,9 @@ export const useEventStore = defineStore('event', () => {
   let events: IEvent[] = []
 
   const init = async () => {
-    await fetchAll()
     socket.connect()
     if (socket.connected) console.log(`${socket.id} connected`)
-
+    await getMyEvents()
     socket.on('connect_error', () => {
       setTimeout(() => {
         socket.connect()
@@ -26,6 +25,11 @@ export const useEventStore = defineStore('event', () => {
 
   const fetchAll = async () => {
     const response = await secureAPI.post('/event/all')
+    events = response.data as IEvent[]
+  }
+
+  const getMyEvents = async () => {
+    const response = await secureAPI.post('/event/mine')
     events = response.data as IEvent[]
   }
 

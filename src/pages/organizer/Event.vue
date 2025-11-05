@@ -21,15 +21,13 @@
     </q-tabs>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis reiciendis, voluptate, eius
-        saepe dignissimos recusandae dolorem velit sed soluta voluptatibus quod id iure a
-        consequuntur modi odit rem maiores illo.
+        <Event v-for="event in events" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem, aut obcaecati est cum
-        harum ea excepturi doloribus quae voluptas sequi at, aliquam provident. Error architecto,
-        vero sunt ipsa aliquid impedit.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium quae commodi delectus
+        officiis repellat voluptatibus error, voluptatum voluptate consectetur, cum corrupti iure
+        amet corporis excepturi tempore odit, sed laborum ipsa.
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
@@ -49,10 +47,15 @@
 
 <script setup lang="ts">
 import CreateEvent from '@/components/CreateEvent.vue'
-import { ref } from 'vue'
+import Event from '@/components/Event.vue'
+import type { IEvent } from '@/interfaces/IEvent'
+import { useEventStore } from '@/stores/Event.store'
+import { ref, watch } from 'vue'
 
+const $eventStore = useEventStore()
 const tab = ref('tab1')
 const show = ref<boolean>(false)
+const events = ref<IEvent[]>($eventStore.getEvents())
 </script>
 
 <style scoped>
