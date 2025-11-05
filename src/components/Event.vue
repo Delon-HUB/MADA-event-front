@@ -35,7 +35,7 @@
         <q-item-label>
           {{ status }}
         </q-item-label>
-        <q-item-label caption>
+        <q-item-label overline class="text-bold">
           <q-icon name="calendar_month" />
           {{ new Date(event.startDate).toLocaleDateString() }}
         </q-item-label>
