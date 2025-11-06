@@ -22,7 +22,6 @@
     </q-card-section>
 
     <q-separator />
-
     <q-card-actions>
       <q-btn icon="download" flat dense no-caps label="PDF" color="green" @click="generatePDF" />
       <q-space />
@@ -64,11 +63,17 @@ const generatePDF = async () => {
     format: 'a6',
   })
 
-  const img = await fetch(qrCode.value)
+  const img = await fetch(qrCode.value, {
+    headers: {
+      'ngrok-skip-browser-warning': '69420',
+    },
+  })
+
   const imgBlob = await img.blob()
   const fileReader = new FileReader()
   fileReader.readAsDataURL(imgBlob)
   fileReader.onloadend = async () => {
+    console.log(fileReader.result)
     pdf.addImage(fileReader.result as string, 'PNG', 20, 20, 250, 250)
     pdf.text(`Ticket pour l'événement ${event.title}`, 42, 270)
     pdf.text(`Le ${new Date(event.startDate).toLocaleString()}`, 42, 290)

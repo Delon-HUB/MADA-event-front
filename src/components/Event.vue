@@ -82,6 +82,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 dayjs.locale('fr')
 
+const showPurchageForm = ref<boolean>(false)
 const expanded = ref(false)
 const props = defineProps<{ event: IEvent }>()
 
@@ -92,5 +93,21 @@ const province = ref<string>(location[0]!)
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
-const showPurchageForm = ref<boolean>(false)
+const getImgAsBase64 = async () => {
+  const url = photo.value
+  const response = await fetch(url, {
+    headers: {
+      'ngrok-skip-browser-warning': 'skip-browser-warning',
+    },
+  })
+
+  const imgBlob = await response.blob()
+  const fileReader = new FileReader()
+  fileReader.readAsDataURL(imgBlob)
+  fileReader.onloadend = async () => {
+    photo.value = fileReader.result as string
+  }
+}
+
+getImgAsBase64()
 </script>
