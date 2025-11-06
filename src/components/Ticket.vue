@@ -1,26 +1,24 @@
 <template>
   <q-card flat>
     <q-card-section horizontal>
-      <div ref="ticketRef">
-        <q-img class="col-5" :src="qrCode" />
-        <q-card-section>
-          <q-item-section class="text-bold">
-            <q-item-label class="text-h6">
-              {{ event.title }}
-            </q-item-label>
-            <q-item-label class="text-bold">
-              <q-icon name="calendar_month" />
-              {{ new Date(props.ticket.createdAt!).toLocaleDateString() }}
-            </q-item-label>
-            <q-item-label>
-              <q-icon name="payments" color="green" /> prix: {{ event.price }} Ar
-            </q-item-label>
-            <q-item-label>
-              <q-icon name="place" color="red" /> {{ event.location.split(',')[0] }}
-            </q-item-label>
-          </q-item-section>
-        </q-card-section>
-      </div>
+      <q-img class="col-5" :src="qrCode" />
+      <q-card-section>
+        <q-item-section class="text-bold">
+          <q-item-label class="text-h6">
+            {{ event.title }}
+          </q-item-label>
+          <q-item-label class="text-bold">
+            <q-icon name="calendar_month" />
+            {{ new Date(props.ticket.createdAt!).toLocaleDateString() }}
+          </q-item-label>
+          <q-item-label>
+            <q-icon name="payments" color="green" /> prix: {{ event.price }} Ar
+          </q-item-label>
+          <q-item-label>
+            <q-icon name="place" color="red" /> {{ event.location.split(',')[0] }}
+          </q-item-label>
+        </q-item-section>
+      </q-card-section>
     </q-card-section>
 
     <q-separator />
@@ -59,10 +57,7 @@ const props = defineProps<{ ticket: ITicket }>()
 const event = reactive<IEvent>(props.ticket.eventId as IEvent)
 const qrCode = ref<string>(`${import.meta.env.VITE_API_URL}/${props.ticket.qrCodeUrl}`)
 
-const ticketRef = ref<HTMLElement | null>(null)
-
 const generatePDF = async () => {
-  if (!ticketRef.value) return
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
@@ -78,7 +73,7 @@ const generatePDF = async () => {
     pdf.text(`Ticket pour l'événement ${event.title}`, 42, 270)
     pdf.text(`Le ${new Date(event.startDate).toLocaleString()}`, 42, 290)
 
-    pdf.save(`ticket-${event.title}.pdf`)
+    pdf.save(`Billet-${event.title}.pdf`)
   }
 }
 </script>
