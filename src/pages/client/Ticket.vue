@@ -1,13 +1,17 @@
 <template>
   <q-page>
     <q-header bordered class="page header text-black">
-      <div class="text-h6">Mes événements</div>
+      <div class="text-h6 text-bold"><q-icon name="receipt" />Mes billets</div>
     </q-header>
-    <q-list> liste de mes billets</q-list>
+    <q-list>
+      <Ticket v-for="i in 10" class="q-ma-sm" />
+    </q-list>
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Ticket from '@/components/Ticket.vue'
+</script>
 
 <style scoped>
 .header {
