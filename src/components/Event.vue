@@ -43,7 +43,9 @@
     </q-item>
 
     <q-card-actions>
-      <q-btn no-caps flat color="positive" icon="receipt">Acheter</q-btn>
+      <q-btn no-caps flat color="positive" icon="receipt" @click="() => (showPurchageForm = true)"
+        >Acheter</q-btn
+      >
       <q-space />
       <q-btn
         flat
@@ -63,10 +65,13 @@
         </q-card-section>
       </div>
     </q-slide-transition>
+
+    <purchase v-model="showPurchageForm" />
   </q-card>
 </template>
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
+import Purchase from './Purchase.vue'
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -97,4 +102,6 @@ const status = ref<string>(getStatus())
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
+
+const showPurchageForm = ref<boolean>(false)
 </script>
