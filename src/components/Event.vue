@@ -66,7 +66,7 @@
       </div>
     </q-slide-transition>
 
-    <purchase v-model="showPurchageForm" />
+    <purchase :event="props.event" v-model="showPurchageForm" />
   </q-card>
 </template>
 <script setup lang="ts">
@@ -98,7 +98,6 @@ const getStatus = () => {
   else if (currentDate.isAfter(dayjs(props.event.startDate))) status = 'Términé'
   return status
 }
-const status = ref<string>(getStatus())
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)

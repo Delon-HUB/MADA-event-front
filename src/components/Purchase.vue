@@ -64,7 +64,7 @@
 
         <q-card-actions align="right" class="bg-white text-teal">
           <q-btn outline color="dark" no-caps label="Annuler" v-close-popup />
-          <q-btn outline color="green" no-caps label="Confirmer" />
+          <q-btn outline color="green" no-caps label="Confirmer" @click="buy" :loading="loading" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -72,9 +72,27 @@
 </template>
 
 <script setup lang="ts">
+import type { IEvent } from '@/interfaces/IEvent'
+import { useEventStore } from '@/stores/Event.store'
 import { ref } from 'vue'
 
+const loading = ref<boolean>(false)
+const $eventStore = useEventStore()
+
 const model = defineModel<boolean>()
+const props = defineProps<{ event: Partial<IEvent> }>()
 const tel = ref<string>()
 const tab = ref<string>('mvola')
+
+const buy = async () => {
+  loading.value = true
+  const response = await $eventStore.buy({
+    eventId: props.event._id!,
+    method: tab.value,
+    phoneNumber: tel.value,
+    amount: props.event.price,
+  })
+  loading.value = true
+  console.log(response.data)
+}
 </script>
