@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
+import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -68,7 +69,12 @@ export const useEventStore = defineStore('event', () => {
     else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
   }
 
+  const buy = async (payment: Partial<IPayment>) => {
+    const response = await secureAPI.post('/payment', payment)
+    return response
+  }
+
   const getEvents = () => all
 
-  return { init, getMyEvents, fetchAll, getEvents, all, inProgress, coming, terminated }
+  return { init, getMyEvents, fetchAll, getEvents, buy, all, inProgress, coming, terminated }
 })
