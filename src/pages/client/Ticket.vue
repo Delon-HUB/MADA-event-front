@@ -4,13 +4,17 @@
       <div class="text-h6 text-bold"><q-icon name="receipt" />Mes billets</div>
     </q-header>
     <q-list>
-      <Ticket v-for="i in 10" class="q-ma-sm" />
+      <Ticket v-for="ticket in $ticketStore.tickets" :ticket="ticket" class="q-ma-sm" />
     </q-list>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import Ticket from '@/components/Ticket.vue'
+import { userTicketStore } from '@/stores/Ticket.store'
+
+const $ticketStore = userTicketStore()
+$ticketStore.init()
 </script>
 
 <style scoped>
