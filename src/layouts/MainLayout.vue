@@ -11,7 +11,15 @@
         <q-space></q-space>
         <div class="toolbar" v-if="currentUser.role == ERole.CLIENT">
           <q-btn flat no-caps dense icon="home" stack label="Découvrir" :to="'/client/home'" />
-          <q-btn flat no-caps dense icon="receipt" stack label="Mes billets" />
+          <q-btn
+            flat
+            no-caps
+            dense
+            icon="receipt"
+            stack
+            label="Mes billets"
+            :to="'/client/tickets'"
+          />
 
           <q-btn flat no-caps dense icon="notifications" stack label="Notification"
             ><q-badge color="red" floating rounded transparent>3</q-badge></q-btn
