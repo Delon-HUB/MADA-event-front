@@ -92,7 +92,9 @@ const buy = async () => {
     phoneNumber: tel.value,
     amount: props.event.price,
   })
-  loading.value = true
+  loading.value = false
+  tel.value = ''
+  model.value = false
   console.log(response.data)
 }
 </script>
