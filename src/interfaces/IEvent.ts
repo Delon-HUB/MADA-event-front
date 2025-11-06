@@ -13,7 +13,7 @@ export interface IEvent {
   price: number
   capacity?: number
   ticketsAvailable?: number
-  ownerId: string
+  ownerId?: string
   participants: IUser[]
   createdAt?: Date
   updatedAt?: Date

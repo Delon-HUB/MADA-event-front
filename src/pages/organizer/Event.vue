@@ -1,6 +1,6 @@
 <template>
   <q-page class="page">
-    <q-header bordered class="page text-black">
+    <q-header bordered class="page header text-black">
       <div class="row text-h6 text-bold">
         <div class="col">Mes événements</div>
         <div class="col text-right">
@@ -53,6 +53,11 @@ const show = ref<boolean>(false)
 </script>
 
 <style scoped>
+.header {
+  position: fixed;
+  top: 0%;
+}
+
 .page {
   background-color: #f1efe3;
 }

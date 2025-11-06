@@ -1,6 +1,6 @@
 <template>
-  <q-page>
-    <q-header bordered class="page">
+  <q-page class="page">
+    <q-header bordered class="page header">
       <q-toolbar>
         <q-toolbar-title class="text-black text-bold">
           <q-icon name="bar_chart_4_bars" />Statistiques</q-toolbar-title
@@ -82,6 +82,11 @@ watch(
 </script>
 
 <style scoped>
+.header {
+  position: fixed;
+  top: 0%;
+}
+
 .page {
   background-color: #f1efe3;
 }
