@@ -89,16 +89,6 @@ const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
 
-const getStatus = () => {
-  let status = ''
-  const currentDate = dayjs()
-  if (currentDate.isBetween(dayjs(props.event.startDate), dayjs(props.event.endDate)))
-    status = 'Encours'
-  else if (currentDate.isBefore(dayjs(props.event.startDate))) status = 'À venir'
-  else if (currentDate.isAfter(dayjs(props.event.startDate))) status = 'Términé'
-  return status
-}
-
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
