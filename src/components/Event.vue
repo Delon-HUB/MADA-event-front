@@ -91,7 +91,24 @@
     <q-slide-transition>
       <div v-show="expandedParticipants">
         <q-separator />
-        <q-card-section class="text-subtitle2"> Participants... </q-card-section>
+        <q-card-section class="text-subtitle2">
+          <p>Participants</p>
+          <q-list>
+            <q-item v-for="user in props.event.participants">
+              <q-item-section avatar>
+                <q-avatar>
+                  <img
+                    src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"
+                  />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ user.firstName + ' ' + user?.lastName }}</q-item-label>
+                <q-item-label caption> {{ user.email }} </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
       </div>
     </q-slide-transition>
 
@@ -133,7 +150,7 @@ const province = ref<string>(location[0]!)
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
-console.log(props.event)
+// console.log(props.event)
 
 // const getImgAsBase64 = async () => {
 //   const url = photo.value
