@@ -44,7 +44,7 @@
 
     <q-card-actions>
       <q-btn
-        v-if="$userStore.currentUser.role != ERole.ORGANIZER"
+        v-if="$userStore.currentUser.role == ERole.CLIENT"
         no-caps
         flat
         color="positive"
@@ -52,23 +52,46 @@
         @click="() => (showPurchageForm = true)"
         >Acheter</q-btn
       >
+      <q-btn
+        v-else
+        flat
+        dense
+        no-caps
+        label="Participants"
+        :icon-right="expandedParticipants ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        @click="
+          () => {
+            expandedParticipants = !expandedParticipants
+            expandedDetails = false
+          }
+        "
+      />
       <q-space />
       <q-btn
         flat
         dense
         no-caps
         label="détails"
-        :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-        @click="expanded = !expanded"
+        :icon="expandedDetails ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+        @click="
+          () => {
+            expandedDetails = !expandedDetails
+            expandedParticipants = false
+          }
+        "
       />
     </q-card-actions>
 
     <q-slide-transition>
-      <div v-show="expanded">
+      <div v-show="expandedDetails">
         <q-separator />
-        <q-card-section class="text-subtitle2">
-          {{ props.event.description }}
-        </q-card-section>
+        <q-card-section class="text-subtitle2"> détails... </q-card-section>
+      </div>
+    </q-slide-transition>
+    <q-slide-transition>
+      <div v-show="expandedParticipants">
+        <q-separator />
+        <q-card-section class="text-subtitle2"> Participants... </q-card-section>
       </div>
     </q-slide-transition>
 
@@ -90,6 +113,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 dayjs.locale('fr')
 
+const props = defineProps<{ event: IEvent }>()
 const userRole = ref<string>()
 const $userStore = useUserStore()
 watch(
@@ -97,8 +121,8 @@ watch(
   () => (userRole.value = $userStore.currentUser.role),
 )
 const showPurchageForm = ref<boolean>(false)
-const expanded = ref(false)
-const props = defineProps<{ event: IEvent }>()
+const expandedDetails = ref(false)
+const expandedParticipants = ref(false)
 
 const photo = ref<string>(
   `${import.meta.env.VITE_API_URL}/${props.event.photo}?ngrok-skip-browser-warning=true`,
@@ -108,6 +132,8 @@ const province = ref<string>(location[0]!)
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
+
+console.log(props.event)
 
 // const getImgAsBase64 = async () => {
 //   const url = photo.value
