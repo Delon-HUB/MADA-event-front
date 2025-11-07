@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-header bordered class="bg-white q-pa-xs text-black">
+    <q-header bordered class="header bg-white q-pa-xs text-black">
       <q-input
         outlined
         rounded
@@ -50,5 +50,9 @@ watch(searchResult.value, () => console.log(searchResult.value))
 <style scoped>
 .page {
   background-color: #f1efe3;
+}
+.header {
+  position: fixed;
+  top: 0%;
 }
 </style>
