@@ -27,5 +27,10 @@ export const userTicketStore = defineStore('ticket', () => {
     return response
   }
 
-  return { init, getMyTickets, buy, tickets }
+  const getTikectsForEvent = async (eventId: string) => {
+    const response = await secureAPI.post('/ticket/event', { eventId: eventId })
+    return response.data as ITicket[]
+  }
+
+  return { init, getMyTickets, getTikectsFoEvent: getTikectsForEvent, buy, tickets }
 })
