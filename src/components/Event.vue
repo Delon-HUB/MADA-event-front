@@ -150,8 +150,6 @@ const province = ref<string>(location[0]!)
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
-// console.log(props.event)
-
 // const getImgAsBase64 = async () => {
 //   const url = photo.value
 //   const response = await fetch(url, {

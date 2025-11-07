@@ -73,7 +73,6 @@ const generatePDF = async () => {
   const fileReader = new FileReader()
   fileReader.readAsDataURL(imgBlob)
   fileReader.onloadend = async () => {
-    console.log(fileReader.result)
     pdf.addImage(fileReader.result as string, 'PNG', 20, 20, 250, 250)
     pdf.text(`Ticket pour l'événement ${event.title}`, 42, 270)
     pdf.text(`Le ${new Date(event.startDate).toLocaleString()}`, 42, 290)

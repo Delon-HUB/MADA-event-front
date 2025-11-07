@@ -43,8 +43,6 @@ watch(
     }
   },
 )
-
-watch(searchResult.value, () => console.log(searchResult.value))
 </script>
 
 <style scoped>

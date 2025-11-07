@@ -80,7 +80,6 @@ export const useEventStore = defineStore('event', () => {
   }
 
   const repartition = (event: IEvent) => {
-    console.log('REEEE')
     const currentDate = dayjs()
     if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
       inProgress.value.push(event)
