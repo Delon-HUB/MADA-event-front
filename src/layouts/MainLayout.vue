@@ -82,9 +82,9 @@ let currentUser = ref<Partial<IUser>>({})
 onBeforeMount(async () => {
   const $userStore = useUserStore()
   await $userStore.init()
-  if (!$userStore.getCurrentUser()) router.push('/auth/login')
-  currentUser.value = $userStore.getCurrentUser()
-  switch ($userStore.getCurrentUser().role) {
+  if (!$userStore.currentUser) router.push('/auth/login')
+  currentUser.value = $userStore.currentUser
+  switch ($userStore.currentUser.role) {
     case ERole.CLIENT:
       router.push('/client')
       break

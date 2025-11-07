@@ -25,8 +25,8 @@ export const useEventStore = defineStore('event', () => {
     const $userStore = useUserStore()
     await $userStore.init()
 
-    if ($userStore.getCurrentUser().role == ERole.CLIENT) await fetchAll()
-    else if ($userStore.getCurrentUser().role == ERole.ORGANIZER) await getMyEvents()
+    if ($userStore.currentUser.role == ERole.CLIENT) await fetchAll()
+    else if ($userStore.currentUser.role == ERole.ORGANIZER) await getMyEvents()
     all.value.forEach((event) => repartition(event))
 
     socket.connect()
@@ -42,8 +42,7 @@ export const useEventStore = defineStore('event', () => {
 
     socket.on('newEvent', (event: IEvent) => {
       const isClientOrOwner =
-        $userStore.getCurrentUser().role == ERole.CLIENT ||
-        $userStore.getCurrentUser()._id === event.ownerId
+        $userStore.currentUser.role == ERole.CLIENT || $userStore.currentUser._id === event.ownerId
       if (isClientOrOwner) {
         all.value.push(event)
         repartition(event)

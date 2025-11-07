@@ -43,7 +43,13 @@
     </q-item>
 
     <q-card-actions>
-      <q-btn no-caps flat color="positive" icon="receipt" @click="() => (showPurchageForm = true)"
+      <q-btn
+        v-if="$userStore.currentUser.role != ERole.ORGANIZER"
+        no-caps
+        flat
+        color="positive"
+        icon="receipt"
+        @click="() => (showPurchageForm = true)"
         >Acheter</q-btn
       >
       <q-space />
@@ -72,42 +78,51 @@
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
 import Purchase from './Purchase.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
+import { useUserStore } from '@/stores/User.store'
+import { ERole } from '@/enums/ERole'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 dayjs.locale('fr')
 
+const userRole = ref<string>()
+const $userStore = useUserStore()
+watch(
+  () => $userStore.currentUser,
+  () => (userRole.value = $userStore.currentUser.role),
+)
 const showPurchageForm = ref<boolean>(false)
 const expanded = ref(false)
 const props = defineProps<{ event: IEvent }>()
 
-const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`)
+const photo = ref<string>(
+  `${import.meta.env.VITE_API_URL}/${props.event.photo}?ngrok-skip-browser-warning=true`,
+)
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
-const getImgAsBase64 = async () => {
-  const url = photo.value
-  const response = await fetch(url, {
-    headers: {
-      'ngrok-skip-browser-warning': 'skip-browser-warning',
-    },
-  })
+// const getImgAsBase64 = async () => {
+//   const url = photo.value
+//   const response = await fetch(url, {
+//     headers: {
+//       'ngrok-skip-browser-warning': 'skip-browser-warning',
+//     },
+//   })
+//   const imgBlob = await response.blob()
+//   const fileReader = new FileReader()
+//   fileReader.readAsDataURL(imgBlob)
+//   fileReader.onloadend = async () => {
+//     photo.value = fileReader.result as string
+//   }
+// }
 
-  const imgBlob = await response.blob()
-  const fileReader = new FileReader()
-  fileReader.readAsDataURL(imgBlob)
-  fileReader.onloadend = async () => {
-    photo.value = fileReader.result as string
-  }
-}
-
-getImgAsBase64()
+// getImgAsBase64()
 </script>
