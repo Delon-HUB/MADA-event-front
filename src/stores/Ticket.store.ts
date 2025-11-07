@@ -32,5 +32,5 @@ export const userTicketStore = defineStore('ticket', () => {
     return response.data as ITicket[]
   }
 
-  return { init, getMyTickets, getTikectsFoEvent: getTikectsForEvent, buy, tickets }
+  return { init, getMyTickets, getTikectsForEvent, buy, tickets }
 })

@@ -10,6 +10,9 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
 import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
+import { userTicketStore } from './Ticket.store'
+import { type ITicket } from '@/interfaces/ITicket'
+import type { IUser } from '@/interfaces/IUser'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -21,13 +24,18 @@ export const useEventStore = defineStore('event', () => {
   let inProgress = ref<IEvent[]>([])
   let terminated = ref<IEvent[]>([])
 
+  let allTicket = ref<ITicket[]>([])
+  const $ticketStore = userTicketStore()
+
   const init = async () => {
     const $userStore = useUserStore()
     await $userStore.init()
 
     if ($userStore.currentUser.role == ERole.CLIENT) await fetchAll()
-    else if ($userStore.currentUser.role == ERole.ORGANIZER) await getMyEvents()
+    else if ($userStore.currentUser.role == ERole.ORGANIZER) all.value = await getMyEvents()
     all.value.forEach((event) => repartition(event))
+    await fetchParticipants()
+    console.log(all.value)
 
     socket.connect()
     if (socket.connected) console.log(`${socket.id} connected`)
@@ -57,10 +65,22 @@ export const useEventStore = defineStore('event', () => {
 
   const getMyEvents = async () => {
     const response = await secureAPI.post('/event/mine')
-    all.value = response.data as IEvent[]
+    return response.data as IEvent[]
+  }
+
+  const fetchParticipants = async (): Promise<IEvent[]> => {
+    const res = await Promise.all(
+      all.value.map(async (ev) => {
+        const tickets = await $ticketStore.getTikectsForEvent(ev._id!)
+        ev.participants = tickets.map((t) => t.userId as IUser)
+        return ev
+      }),
+    )
+    return res
   }
 
   const repartition = (event: IEvent) => {
+    console.log('REEEE')
     const currentDate = dayjs()
     if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
       inProgress.value.push(event)
