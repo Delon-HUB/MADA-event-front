@@ -98,7 +98,6 @@ import { useEventStore } from '@/stores/Event.store'
 import { watch, ref } from 'vue'
 
 const $eventStore = useEventStore()
-$eventStore.all.forEach((ev) => $eventStore.repartition(ev))
 
 const totalEvent = ref<number>(0)
 const tickets = ref<number>(0)

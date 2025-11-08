@@ -29,11 +29,14 @@ export const useEventStore = defineStore('event', () => {
     const $userStore = useUserStore()
     await $userStore.init()
 
-    if ($userStore.currentUser.role == ERole.CLIENT) await fetchAll()
-    else if ($userStore.currentUser.role == ERole.ORGANIZER) {
+    if ($userStore.currentUser!.role == ERole.CLIENT) await fetchAll()
+    else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
       all.value = await getMyEvents()
       await fetchParticipants()
     }
+    coming.value = []
+    inProgress.value = []
+    terminated.value = []
     all.value.forEach((ev) => repartition(ev))
 
     socket.connect()
@@ -49,7 +52,8 @@ export const useEventStore = defineStore('event', () => {
 
     socket.on('newEvent', (event: IEvent) => {
       const isClientOrOwner =
-        $userStore.currentUser.role == ERole.CLIENT || $userStore.currentUser._id === event.ownerId
+        $userStore.currentUser!.role == ERole.CLIENT ||
+        $userStore.currentUser!._id === event.ownerId
       if (isClientOrOwner) {
         all.value.push(event)
         repartition(event)
@@ -105,7 +109,6 @@ export const useEventStore = defineStore('event', () => {
     fetchAll,
     getEvents,
     buy,
-    repartition,
     all,
     inProgress,
     coming,
