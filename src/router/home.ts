@@ -10,7 +10,7 @@ export const HOME_ROUTER = [
       {
         path: 'home',
         name: 'home',
-        component: Home,
+        component: () => import('@/pages/client/Home.vue'),
       },
       {
         path: 'tickets',
@@ -27,7 +27,7 @@ export const HOME_ROUTER = [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: Dashboard,
+        component: () => import('@/pages/organizer/Dashboard.vue'),
       },
       {
         path: 'event',

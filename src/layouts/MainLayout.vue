@@ -84,6 +84,10 @@ onBeforeMount(async () => {
   await $userStore.init()
   if (!$userStore.currentUser) router.push('/auth/login')
   currentUser.value = $userStore.currentUser
+
+  const $eventStore = useEventStore()
+  await $eventStore.init()
+
   switch ($userStore.currentUser.role) {
     case ERole.CLIENT:
       router.push('/client')
@@ -92,9 +96,6 @@ onBeforeMount(async () => {
       router.push('/organizer')
       break
   }
-
-  const $eventStore = useEventStore()
-  await $eventStore.init()
 })
 </script>
 <style scoped>
