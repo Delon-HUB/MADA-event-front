@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
   const setToken = (_token: string) => {
     localStorage.setItem('token', _token)
     token.value = _token
-    secureAPI.defaults.headers.common.Authorization = `Bearer ${token}`
+    secureAPI.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token') || ''}`
   }
 
   const verifyOTP = async (email: string, otp: string) => {
