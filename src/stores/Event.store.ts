@@ -4,14 +4,13 @@ import type { IEvent } from '@/interfaces/IEvent'
 import { defineStore } from 'pinia'
 import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
 import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
 import { userTicketStore } from './Ticket.store'
-import { type ITicket } from '@/interfaces/ITicket'
 import type { IUser } from '@/interfaces/IUser'
 
 dayjs.extend(relativeTime)
@@ -24,7 +23,6 @@ export const useEventStore = defineStore('event', () => {
   let inProgress = ref<IEvent[]>([])
   let terminated = ref<IEvent[]>([])
 
-  let allTicket = ref<ITicket[]>([])
   const $ticketStore = userTicketStore()
 
   const init = async () => {
@@ -32,10 +30,11 @@ export const useEventStore = defineStore('event', () => {
     await $userStore.init()
 
     if ($userStore.currentUser.role == ERole.CLIENT) await fetchAll()
-    else if ($userStore.currentUser.role == ERole.ORGANIZER) all.value = await getMyEvents()
-    all.value.forEach((event) => repartition(event))
-    await fetchParticipants()
-    console.log(all.value)
+    else if ($userStore.currentUser.role == ERole.ORGANIZER) {
+      all.value = await getMyEvents()
+      await fetchParticipants()
+    }
+    all.value.forEach((ev) => repartition(ev))
 
     socket.connect()
     if (socket.connected) console.log(`${socket.id} connected`)
@@ -80,11 +79,17 @@ export const useEventStore = defineStore('event', () => {
   }
 
   const repartition = (event: IEvent) => {
-    const currentDate = dayjs()
-    if (currentDate.isBetween(dayjs(event.startDate), dayjs(event.endDate)))
-      inProgress.value.push(event)
-    else if (currentDate.isBefore(dayjs(event.startDate))) coming.value.push(event)
-    else if (currentDate.isAfter(dayjs(event.startDate))) terminated.value.push(event)
+    const now = dayjs()
+    const startDate = dayjs(event.startDate)
+    const endDate = dayjs(event.endDate)
+
+    if (now.isBefore(startDate)) {
+      if (!coming.value.includes(event)) coming.value.push(event)
+    } else if (now.isAfter(endDate)) {
+      if (!terminated.value.includes(event)) terminated.value.push(event)
+    } else if (now.isBetween(startDate, endDate, null, '[]')) {
+      if (!inProgress.value.includes(event)) inProgress.value.push(event)
+    }
   }
 
   const buy = async (payment: Partial<IPayment>) => {
@@ -94,5 +99,16 @@ export const useEventStore = defineStore('event', () => {
 
   const getEvents = () => all
 
-  return { init, getMyEvents, fetchAll, getEvents, buy, all, inProgress, coming, terminated }
+  return {
+    init,
+    getMyEvents,
+    fetchAll,
+    getEvents,
+    buy,
+    repartition,
+    all,
+    inProgress,
+    coming,
+    terminated,
+  }
 })
