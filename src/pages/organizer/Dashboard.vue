@@ -119,7 +119,6 @@ recalculateData()
 watch(
   () => $eventStore.all,
   () => {
-    console.log('taille = ' + $eventStore.all.length)
     recalculateData()
   },
 )

@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-  let currentUser = ref<Partial<IUser>>({})
+  let currentUser = ref<Partial<IUser>>()
 
   const init = async () => {
     const user = (await getMyInformation()).data as Partial<IUser>

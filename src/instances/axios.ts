@@ -4,12 +4,13 @@ import { errorForFrenchUser } from '@/utils/errorForHumain'
 import axios, { AxiosError } from 'axios'
 import { Notify } from 'quasar'
 
+const token = localStorage.getItem('token') || ''
 let secureAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+    Authorization: `Bearer ${token}`,
   },
 })
 
