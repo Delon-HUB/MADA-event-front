@@ -48,6 +48,7 @@ import { useEventStore } from '@/stores/Event.store'
 import { ref } from 'vue'
 
 const $eventStore = useEventStore()
+$eventStore.all.forEach((ev) => $eventStore.repartition(ev))
 const tab = ref('tab1')
 const show = ref<boolean>(false)
 </script>

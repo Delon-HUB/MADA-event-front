@@ -92,8 +92,10 @@
       <div v-show="expandedParticipants">
         <q-separator />
         <q-card-section class="text-subtitle2">
-          <p>Participants</p>
-          <q-list>
+          <p v-if="props.event.participants?.length === 0" class="text-center text-overline">
+            Aucun participant pour cet événement
+          </p>
+          <q-list v-else>
             <q-item v-for="user in props.event.participants">
               <q-item-section avatar>
                 <q-avatar>
