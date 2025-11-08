@@ -54,15 +54,30 @@
             :to="'/organizer/event'"
           />
           <q-btn flat no-caps dense icon="notifications" stack label="Notification" />
-          <q-btn
-            flat
-            no-caps
-            dense
-            icon="person"
-            stack
-            label="Compte"
-            @click="() => useAuthStore().logout()"
-          />
+
+          <q-btn-dropdown flat no-caps dense stack>
+            <template v-slot:label> <q-icon name="menu" /> Menu</template>
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section avatar>
+                  <q-avatar icon="person" color="#14452f"></q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Gérer mon compte</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-separator inset />
+              <q-item clickable v-close-popup @click="() => useAuthStore().logout()">
+                <q-item-section avatar>
+                  <q-avatar icon="logout" color="#14452f"></q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Se déconnecter</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </q-toolbar>
     </q-footer>
