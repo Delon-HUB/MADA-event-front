@@ -95,6 +95,5 @@ const buy = async () => {
   loading.value = false
   tel.value = ''
   model.value = false
-  console.log(response.data)
 }
 </script>

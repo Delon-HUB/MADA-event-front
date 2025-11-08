@@ -9,13 +9,13 @@
     </q-header>
     <q-card flat>
       <div class="row text-center">
-        <p class="text-overline full-width">17 événements en total</p>
+        <p class="text-overline full-width">{{ $eventStore.all.length }} événements en total</p>
       </div>
       <div class="row text-center">
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="total"
+              :max="totalEvent"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -33,7 +33,7 @@
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="total"
+              :max="totalEvent"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -51,7 +51,7 @@
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="total"
+              :max="totalEvent"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -76,7 +76,7 @@
 
         <q-item-section>Billet vendu</q-item-section>
         <q-item-section side>
-          <q-item-label>350</q-item-label>
+          <q-item-label>{{ tickets }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item clickable v-ripple>
@@ -86,7 +86,7 @@
 
         <q-item-section>Gains total</q-item-section>
         <q-item-section side>
-          <q-item-label>150000ar</q-item-label>
+          <q-item-label>{{ gain }} ar</q-item-label>
         </q-item-section>
       </q-item>
     </q-card>
@@ -98,12 +98,29 @@ import { useEventStore } from '@/stores/Event.store'
 import { watch, ref } from 'vue'
 
 const $eventStore = useEventStore()
-const total = ref<number>($eventStore.all.length)
+$eventStore.all.forEach((ev) => $eventStore.repartition(ev))
+
+const totalEvent = ref<number>(0)
+const tickets = ref<number>(0)
+const gain = ref<number>(0)
+
+const recalculateData = () => {
+  totalEvent.value = $eventStore.all.length
+  $eventStore.all.forEach((ev) => {
+    if (ev.participants && ev.participants.length > 0) {
+      gain.value += ev.price * ev.participants.length
+      tickets.value += ev.participants.length
+    }
+  })
+}
+
+recalculateData()
 
 watch(
   () => $eventStore.all,
   () => {
-    total.value = $eventStore.all.length
+    console.log('taille = ' + $eventStore.all.length)
+    recalculateData()
   },
 )
 </script>
