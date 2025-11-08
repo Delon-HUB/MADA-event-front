@@ -24,15 +24,29 @@
           <q-btn flat no-caps dense icon="notifications" stack label="Notification"
             ><q-badge color="red" floating rounded transparent>3</q-badge></q-btn
           >
-          <q-btn
-            flat
-            no-caps
-            dense
-            icon="person"
-            stack
-            label="Compte"
-            @click="() => useAuthStore().logout()"
-          />
+          <q-btn-dropdown flat no-caps dense stack>
+            <template v-slot:label> <q-icon name="menu" /> Menu</template>
+            <q-list>
+              <q-item clickable v-close-popup>
+                <q-item-section avatar>
+                  <q-avatar icon="person" color="#14452f"></q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Gérer mon compte</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-separator inset />
+              <q-item clickable v-close-popup @click="() => useAuthStore().logout()">
+                <q-item-section avatar>
+                  <q-avatar icon="logout" color="#14452f"></q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Se déconnecter</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
         <div class="toolbar" v-if="currentUser.role == ERole.ORGANIZER">
           <q-btn
@@ -90,6 +104,7 @@ import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
 import { useEventStore } from '@/stores/Event.store'
+import { userTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
 import { onBeforeMount, ref } from 'vue'
 
@@ -104,7 +119,11 @@ onBeforeMount(async () => {
   await $eventStore.init()
   switch ($userStore.currentUser!.role) {
     case ERole.CLIENT:
-      router.replace('/client/home')
+      {
+        const $ticketStore = userTicketStore()
+        await $ticketStore.init()
+        router.replace('/client/home')
+      }
       break
     case ERole.ORGANIZER:
       router.replace('/organizer/dashboard')

@@ -6,6 +6,8 @@ import { ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
+import { useUserStore } from './User.store'
+import { ERole } from '@/enums/ERole'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -14,7 +16,8 @@ export const userTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
 
   const init = async () => {
-    await getMyTickets()
+    const $userStore = useUserStore()
+    if ($userStore.currentUser!.role == ERole.CLIENT) await getMyTickets()
   }
 
   const getMyTickets = async () => {
