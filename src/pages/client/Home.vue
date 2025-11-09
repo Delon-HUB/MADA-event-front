@@ -9,7 +9,16 @@
         placeholder="Que recherchez-vous ?"
         clearable
       >
-        <template v-slot:after><q-btn label="Filtres" flat no-caps icon="tune" /></template>
+        <template v-slot:after
+          ><q-btn
+            label="Filtres"
+            flat
+            no-caps
+            icon="tune"
+            @click="() => (showFilter = !showFilter)"
+          />
+          <Filter @finish="(ev) => search(ev)" v-model="showFilter" />
+        </template>
       </q-input>
     </q-header>
 
@@ -20,6 +29,7 @@
   </q-page>
 </template>
 <script setup lang="ts">
+import Filter from '@/components/Filter.vue'
 import Event from '@/components/Event.vue'
 import { type IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
@@ -27,6 +37,7 @@ import { computed, ref, watch } from 'vue'
 
 const text = ref<string>()
 const searching = ref<boolean>(false)
+const showFilter = ref<boolean>(false)
 
 const $eventStore = useEventStore()
 const events = computed(() => $eventStore.inProgress.concat($eventStore.coming))
@@ -43,6 +54,13 @@ watch(
     }
   },
 )
+
+const search = (event: Partial<IEvent>) => {
+  searching.value = true
+  if (event.category && event.category != 'Tous')
+    searchResult.value = events.value.filter((ev) => ev.category == event.category)
+  else searchResult.value = events.value
+}
 </script>
 
 <style scoped>

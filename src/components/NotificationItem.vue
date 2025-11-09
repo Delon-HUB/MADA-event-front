@@ -10,7 +10,7 @@
           v-if="$userStore.currentUser?.role == 'CLIENT'"
           name="receipts"
           size="32px"
-          color="green"
+          color="blue-grey"
         />
         <img v-else :src="profilePic" />
       </q-avatar>
