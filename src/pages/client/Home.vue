@@ -17,7 +17,7 @@
             icon="tune"
             @click="() => (showFilter = !showFilter)"
           />
-          <Filter @finish="(ev) => search(ev)" v-model="showFilter" />
+          <Filter @finish="(options, ev) => search(options, ev)" v-model="showFilter" />
         </template>
       </q-input>
     </q-header>
@@ -46,6 +46,13 @@ import { type IEvent } from '@/interfaces/IEvent'
 import { useEventStore } from '@/stores/Event.store'
 import { computed, ref, watch } from 'vue'
 
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import isBetween from 'dayjs/plugin/isBetween'
+dayjs.extend(relativeTime)
+dayjs.extend(isBetween)
+dayjs.locale('fr')
+
 const text = ref<string>()
 const searching = ref<boolean>(false)
 const showFilter = ref<boolean>(false)
@@ -66,11 +73,49 @@ watch(
   },
 )
 
-const search = (event: Partial<IEvent>) => {
+const search = (options: { category: boolean; date: boolean }, event: Partial<IEvent>) => {
   searching.value = true
-  if (event.category && event.category != 'Tous')
-    searchResult.value = events.value.filter((ev) => ev.category == event.category)
-  else searchResult.value = events.value
+  searchResult.value = events.value
+  if (options.category) {
+    if (event.category && event.category != 'Tous')
+      searchResult.value = events.value.filter((ev) => ev.category == event.category)
+  }
+
+  if (options.date) {
+    const startDate = dayjs(new Date(event.startDate!).toDateString())
+    const endDate = dayjs(new Date(event.endDate!).toDateString())
+
+    switch (event.description) {
+      case 'between':
+        {
+          searchResult.value = searchResult.value.filter((ev) =>
+            dayjs(new Date(ev.startDate).toDateString()).isBetween(startDate, endDate),
+          )
+        }
+        break
+      case 'before':
+        {
+          searchResult.value = searchResult.value.filter((ev) =>
+            dayjs(new Date(ev.startDate).toDateString()).isBefore(startDate),
+          )
+        }
+        break
+      case 'after':
+        {
+          searchResult.value = searchResult.value.filter((ev) =>
+            dayjs(new Date(ev.startDate).toDateString()).isAfter(startDate),
+          )
+        }
+        break
+      case 'exactly':
+        {
+          searchResult.value = searchResult.value.filter((ev) =>
+            dayjs(new Date(ev.startDate).toDateString()).isSame(startDate),
+          )
+        }
+        break
+    }
+  }
 }
 </script>
 
