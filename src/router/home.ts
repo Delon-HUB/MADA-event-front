@@ -1,6 +1,3 @@
-import Home from '@/pages/client/Home.vue'
-import Dashboard from '@/pages/organizer/Dashboard.vue'
-
 export const HOME_ROUTER = [
   {
     path: 'client',
@@ -16,6 +13,10 @@ export const HOME_ROUTER = [
         path: 'tickets',
         name: 'tickets',
         component: () => import('@/pages/client/Ticket.vue'),
+      },
+      {
+        path: 'notifications',
+        component: () => import('@/pages/Notification.vue'),
       },
     ],
   },
@@ -33,6 +34,10 @@ export const HOME_ROUTER = [
         path: 'event',
         name: 'event',
         component: () => import('@/pages/organizer/Event.vue'),
+      },
+      {
+        path: 'notifications',
+        component: () => import('@/pages/Notification.vue'),
       },
     ],
   },
