@@ -66,8 +66,20 @@ watch(
     if (!text.value?.trim()) searching.value = false
     else {
       searching.value = true
-      searchResult.value = events.value.filter((event) =>
-        event.title.trim().toLocaleLowerCase().includes(text.value!.trim().toLocaleLowerCase()),
+      searchResult.value = events.value.filter(
+        (event) =>
+          event.title
+            ?.trim()
+            .toLocaleLowerCase()
+            .includes(text.value!.trim().toLocaleLowerCase()) ||
+          event.location
+            ?.trim()
+            .toLocaleLowerCase()
+            .includes(text.value!.trim().toLocaleLowerCase()) ||
+          event.address
+            ?.trim()
+            .toLocaleLowerCase()
+            .includes(text.value!.trim().toLocaleLowerCase()),
       )
     }
   },
