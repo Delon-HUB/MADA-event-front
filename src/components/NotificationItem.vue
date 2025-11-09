@@ -12,7 +12,7 @@
           size="32px"
           color="green"
         />
-        <img v-else src="/home/delon/Images/Camera/dhsjaj.jpg" />
+        <img v-else :src="profilePic" />
       </q-avatar>
     </q-item-section>
 
@@ -37,5 +37,7 @@ dayjs.locale('fr')
 const props = defineProps<{ data: INotification }>()
 const $userStore = useUserStore()
 const date = ref(dayjs(props.data.createdAt).fromNow())
+
+const profilePic = `${import.meta.env.VITE_API_URL}/public/profile/default.jpeg`
 setInterval(() => (date.value = dayjs(props.data.createdAt).fromNow()), 1000 * 60)
 </script>

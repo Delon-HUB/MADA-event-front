@@ -19,7 +19,6 @@ export const useNotificationStore = defineStore('notification', () => {
   const getMyNotifications = async () => {
     const response = await secureAPI.post('/notification/mine')
     notifications.value = response.data as INotification[]
-    console.log(notifications.value)
   }
 
   return { notifications, unread, clear, init }
