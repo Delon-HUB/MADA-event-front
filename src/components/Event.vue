@@ -24,7 +24,7 @@
     <q-item>
       <q-item-section avatar>
         <q-avatar>
-          <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" />
+          <img :src="profilePic" />
         </q-avatar>
       </q-item-section>
 
@@ -99,9 +99,7 @@
             <q-item v-for="user in props.event.participants">
               <q-item-section avatar>
                 <q-avatar>
-                  <img
-                    src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg"
-                  />
+                  <img :src="profilePic" />
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -168,4 +166,6 @@ setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 10
 // }
 
 // getImgAsBase64()
+
+const profilePic = `${import.meta.env.VITE_API_URL}/public/profile/default.jpeg`
 </script>
