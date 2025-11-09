@@ -21,8 +21,17 @@
             :to="'/client/tickets'"
           />
 
-          <q-btn flat no-caps dense icon="notifications" stack label="Notification"
-            ><q-badge color="red" floating rounded transparent>3</q-badge></q-btn
+          <q-btn
+            flat
+            no-caps
+            dense
+            icon="notifications"
+            stack
+            label="Notification"
+            :to="'/client/notifications'"
+            ><q-badge v-if="$notificationStore.unread" color="red" floating rounded transparent>{{
+              $notificationStore.unread <= 9 ? $notificationStore.unread : '9+'
+            }}</q-badge></q-btn
           >
           <q-btn-dropdown flat no-caps dense stack>
             <template v-slot:label> <q-icon name="menu" /> Menu</template>
@@ -67,7 +76,18 @@
             label="Mes événement"
             :to="'/organizer/event'"
           />
-          <q-btn flat no-caps dense icon="notifications" stack label="Notification" />
+          <q-btn
+            flat
+            no-caps
+            dense
+            icon="notifications"
+            stack
+            label="Notification"
+            :to="'/organizer/notifications'"
+            ><q-badge v-if="$notificationStore.unread" color="red" floating rounded transparent>{{
+              $notificationStore.unread <= 9 ? $notificationStore.unread : '9+'
+            }}</q-badge></q-btn
+          >
 
           <q-btn-dropdown flat no-caps dense stack>
             <template v-slot:label> <q-icon name="menu" /> Menu</template>
@@ -104,9 +124,12 @@ import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
 import { useEventStore } from '@/stores/Event.store'
+import { useNotificationStore } from '@/stores/Notification.store'
 import { userTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
+
+const $notificationStore = useNotificationStore()
 
 let currentUser = ref<Partial<IUser>>({})
 onBeforeMount(async () => {
@@ -129,6 +152,7 @@ onBeforeMount(async () => {
       router.replace('/organizer/dashboard')
       break
   }
+  await $notificationStore.init()
 })
 </script>
 <style scoped>
