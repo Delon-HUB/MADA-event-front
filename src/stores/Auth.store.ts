@@ -1,8 +1,10 @@
 import { publicAPI, secureAPI } from '@/instances/axios'
+import socket from '@/instances/socket'
 import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useNotificationStore } from './Notification.store'
 
 export const useAuthStore = defineStore('auth', () => {
   let email = ref<string>(localStorage.getItem('email') || '')
@@ -20,6 +22,11 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('token', _token)
     token.value = _token
     secureAPI.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token') || ''}`
+    socket.disconnect()
+    socket.auth = {
+      token: `Bearer ${localStorage.getItem('token') || ''}`,
+    }
+    socket.connect()
   }
 
   const verifyOTP = async (email: string, otp: string) => {
@@ -36,11 +43,14 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = () => {
+    socket.auth = { token: '' }
+    socket.disconnect()
     localStorage.removeItem('token')
     localStorage.removeItem('email')
     token.value = ''
     email.value = ''
     secureAPI.defaults.headers['Authorization'] = ''
+    useNotificationStore().clear()
     router.push('/auth/login')
   }
 
