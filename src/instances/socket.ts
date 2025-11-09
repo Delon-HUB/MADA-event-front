@@ -6,6 +6,10 @@ const socket = io(import.meta.env.VITE_API_URL, {
   reconnectionDelay: 1000,
   reconnectionDelayMax: 5000,
   reconnectionAttempts: 5,
+  auth: {
+    token: `Bearer ${localStorage.getItem('token') || ''}`,
+  },
+  timeout: 30_000,
 })
 
 export default socket
