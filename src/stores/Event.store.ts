@@ -12,6 +12,9 @@ import 'dayjs/locale/fr'
 import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
 import { userTicketStore } from './Ticket.store'
 import type { IUser } from '@/interfaces/IUser'
+import { Notify } from 'quasar'
+import { useNotificationStore } from './Notification.store'
+import type { INotification } from '@/interfaces/INotification'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -24,13 +27,16 @@ export const useEventStore = defineStore('event', () => {
   let terminated = ref<IEvent[]>([])
 
   const $ticketStore = userTicketStore()
+  const $userStore = useUserStore()
+  const $notificationStore = useNotificationStore()
 
   const init = async () => {
-    const $userStore = useUserStore()
     await $userStore.init()
+    socket.connect()
 
-    if ($userStore.currentUser!.role == ERole.CLIENT) await fetchAll()
-    else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
+    if ($userStore.currentUser!.role == ERole.CLIENT) {
+      await fetchAll()
+    } else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
       all.value = await getMyEvents()
       await fetchParticipants()
     }
@@ -39,8 +45,34 @@ export const useEventStore = defineStore('event', () => {
     terminated.value = []
     all.value.forEach((ev) => repartition(ev))
 
-    socket.connect()
-    if (socket.connected) console.log(`${socket.id} connected`)
+    socket.on('newEvent', (event: IEvent) => {
+      all.value.push(event)
+      repartition(event)
+    })
+
+    socket.on('ticketPaid', (notif: INotification) => {
+      if ($userStore.currentUser?.role == ERole.CLIENT) {
+        Notify.create({
+          message: 'Achat de billet effectué',
+          position: 'top-right',
+          icon: 'checked',
+          iconColor: 'green',
+          classes: 'bg-white text-black',
+        })
+        $notificationStore.notifications.push(notif)
+        $notificationStore.unread++
+      } else if ($userStore.currentUser?.role == ERole.ORGANIZER) {
+        Notify.create({
+          message: 'Nouveau participant',
+          position: 'top-right',
+          icon: 'information',
+          iconColor: 'green',
+          classes: 'bg-white text-black',
+        })
+        $notificationStore.notifications.push(notif)
+        $notificationStore.unread++
+      }
+    })
 
     socket.on('connect_error', () => {
       setTimeout(() => {
@@ -48,17 +80,7 @@ export const useEventStore = defineStore('event', () => {
       }, 30_000)
     })
     socket.on('connect', () => console.log(`${socket.id} connected`))
-    socket.on('disconnect', () => console.log(`${socket.id} connected`))
-
-    socket.on('newEvent', (event: IEvent) => {
-      const isClientOrOwner =
-        $userStore.currentUser!.role == ERole.CLIENT ||
-        $userStore.currentUser!._id === event.ownerId
-      if (isClientOrOwner) {
-        all.value.push(event)
-        repartition(event)
-      }
-    })
+    socket.on('disconnect', () => console.log(`${socket.id} disconnected`))
   }
 
   const fetchAll = async () => {

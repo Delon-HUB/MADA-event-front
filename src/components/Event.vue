@@ -44,7 +44,7 @@
 
     <q-card-actions>
       <q-btn
-        v-if="$userStore.currentUser.role == ERole.CLIENT"
+        v-if="$userStore.currentUser!.role == ERole.CLIENT"
         no-caps
         flat
         color="positive"
@@ -137,7 +137,7 @@ const userRole = ref<string>()
 const $userStore = useUserStore()
 watch(
   () => $userStore.currentUser,
-  () => (userRole.value = $userStore.currentUser.role),
+  () => (userRole.value = $userStore.currentUser!.role),
 )
 const showPurchageForm = ref<boolean>(false)
 const expandedDetails = ref(false)
