@@ -3,7 +3,11 @@
     <q-item>
       <q-item-section class="text-bold">
         <q-item-label>
-          <p class="text-h6 text-bold">{{ event.title }}</p>
+          <p class="text-bold">
+            {{ event.title }} <br /><span class="text-grey text-caption" v-if="showTicketRemaining"
+              >{{ remainingTickets != 0 ? remainingTickets + ' billets restant' : 'Place complet' }}
+            </span>
+          </p>
         </q-item-label>
       </q-item-section>
       <q-space />
@@ -45,29 +49,32 @@
     </q-item>
 
     <q-card-actions>
-      <q-btn
-        v-if="$userStore.currentUser!.role == ERole.CLIENT"
-        no-caps
-        flat
-        color="positive"
-        icon="receipt"
-        @click="() => (showPurchageForm = true)"
-        >Acheter</q-btn
-      >
-      <q-btn
-        v-else
-        flat
-        dense
-        no-caps
-        label="Participants"
-        :icon-right="expandedParticipants ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-        @click="
-          () => {
-            expandedParticipants = !expandedParticipants
-            expandedDetails = false
-          }
-        "
-      />
+      <div v-if="$userStore.currentUser!.role == ERole.CLIENT">
+        <q-btn
+          v-if="props.event.capacity == 0 || remainingTickets > 0"
+          no-caps
+          flat
+          color="positive"
+          icon="receipt"
+          @click="() => (showPurchageForm = true)"
+          >Acheter</q-btn
+        >
+      </div>
+      <div v-else>
+        <q-btn
+          flat
+          dense
+          no-caps
+          label="Participants"
+          :icon-right="expandedParticipants ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="
+            () => {
+              expandedParticipants = !expandedParticipants
+              expandedDetails = false
+            }
+          "
+        />
+      </div>
       <q-space />
       <q-btn
         flat
@@ -120,7 +127,7 @@
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
 import Purchase from './Purchase.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
@@ -136,6 +143,13 @@ dayjs.locale('fr')
 const props = defineProps<{ event: IEvent }>()
 const userRole = ref<string>()
 const $userStore = useUserStore()
+
+const remainingTickets = computed(() => props.event.capacity! - props.event.participants.length)
+
+const showTicketRemaining = computed(
+  () => props.event.capacity && props.event.capacity > 0 && remainingTickets.value <= 10,
+)
+
 watch(
   () => $userStore.currentUser,
   () => (userRole.value = $userStore.currentUser!.role),

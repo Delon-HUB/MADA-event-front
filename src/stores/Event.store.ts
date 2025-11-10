@@ -49,15 +49,7 @@ export const useEventStore = defineStore('event', () => {
     })
 
     socket.on('ticketPaid', (newTicket: ITicket) => {
-      if ($userStore.currentUser?.role == ERole.CLIENT) {
-        Notify.create({
-          message: 'Achat de billet effectué',
-          position: 'top-right',
-          icon: 'checked',
-          iconColor: 'green',
-          classes: 'bg-white text-black',
-        })
-      } else if ($userStore.currentUser?.role == ERole.ORGANIZER) {
+      if ($userStore.currentUser?.role == ERole.ORGANIZER) {
         Notify.create({
           message: 'Nouveau participant',
           position: 'top-right',
@@ -65,9 +57,17 @@ export const useEventStore = defineStore('event', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-        const event = all.value.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
-        if (event) event.participants.push(newTicket.userId as IUser)
+      } else if ($userStore.currentUser?._id == newTicket.userId) {
+        Notify.create({
+          message: 'Achat de billet effectué',
+          position: 'top-right',
+          icon: 'checked',
+          iconColor: 'green',
+          classes: 'bg-white text-black',
+        })
       }
+      const event = all.value.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
+      if (event) event.participants.push(newTicket.userId as IUser)
       $ticketStore.tickets.push(newTicket)
     })
 
