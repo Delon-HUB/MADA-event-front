@@ -4,7 +4,7 @@
       <q-item-section class="text-bold">
         <q-item-label>
           <p class="text-bold">
-            {{ event.title }} <br /><span class="text-grey text-caption" v-if="showTicketRemaining"
+            {{ event.title }} <br /><span class="text-red text-caption" v-if="showTicketRemaining"
               >{{ remainingTickets != 0 ? remainingTickets + ' billets restant' : 'Place complet' }}
             </span>
           </p>

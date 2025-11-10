@@ -57,7 +57,10 @@ export const useEventStore = defineStore('event', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-      } else if ($userStore.currentUser?._id == newTicket.userId) {
+      } else if (
+        $userStore.currentUser?.role == ERole.CLIENT &&
+        $userStore.currentUser?._id == newTicket.userId
+      ) {
         Notify.create({
           message: 'Achat de billet effectué',
           position: 'top-right',
