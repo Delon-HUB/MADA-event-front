@@ -10,11 +10,11 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
 import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
-import { userTicketStore } from './Ticket.store'
+import { useTicketStore } from './Ticket.store'
 import type { IUser } from '@/interfaces/IUser'
 import { Notify } from 'quasar'
 import { useNotificationStore } from './Notification.store'
-import type { INotification } from '@/interfaces/INotification'
+import type { ITicket } from '@/interfaces/ITicket'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -26,7 +26,7 @@ export const useEventStore = defineStore('event', () => {
   let inProgress = ref<IEvent[]>([])
   let terminated = ref<IEvent[]>([])
 
-  const $ticketStore = userTicketStore()
+  const $ticketStore = useTicketStore()
   const $userStore = useUserStore()
   const $notificationStore = useNotificationStore()
 
@@ -50,7 +50,7 @@ export const useEventStore = defineStore('event', () => {
       repartition(event)
     })
 
-    socket.on('ticketPaid', (notif: INotification) => {
+    socket.on('ticketPaid', (newTicket: ITicket) => {
       if ($userStore.currentUser?.role == ERole.CLIENT) {
         Notify.create({
           message: 'Achat de billet effectué',
@@ -59,7 +59,6 @@ export const useEventStore = defineStore('event', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-        $notificationStore.notifications.push(notif)
         $notificationStore.unread++
       } else if ($userStore.currentUser?.role == ERole.ORGANIZER) {
         Notify.create({
@@ -69,9 +68,11 @@ export const useEventStore = defineStore('event', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-        $notificationStore.notifications.push(notif)
+        const event = all.value.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
+        if (event) event.participants.push(newTicket.userId as IUser)
         $notificationStore.unread++
       }
+      $ticketStore.tickets.push(newTicket)
     })
 
     socket.on('connect_error', () => {
@@ -94,9 +95,14 @@ export const useEventStore = defineStore('event', () => {
   }
 
   const fetchParticipants = async (): Promise<IEvent[]> => {
+    const $ticketStore = useTicketStore()
     const res = await Promise.all(
       all.value.map(async (ev) => {
         const tickets = await $ticketStore.getTikectsForEvent(ev._id!)
+        tickets.forEach((t) => {
+          $ticketStore.tickets.push(t)
+          $ticketStore.totalPrice += t.price
+        })
         ev.participants = tickets.map((t) => t.userId as IUser)
         return ev
       }),

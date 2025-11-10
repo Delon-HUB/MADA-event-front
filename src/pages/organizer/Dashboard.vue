@@ -15,7 +15,7 @@
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="totalEvent"
+              :max="$eventStore.all.length"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -33,7 +33,7 @@
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="totalEvent"
+              :max="$eventStore.all.length"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -51,7 +51,7 @@
         <div class="col">
           <q-card flat bordered class="q-ma-xs">
             <q-knob
-              :max="totalEvent"
+              :max="$eventStore.all.length"
               :min="0"
               show-value
               class="text-white q-ma-md"
@@ -76,7 +76,7 @@
 
         <q-item-section>Billet vendu</q-item-section>
         <q-item-section side>
-          <q-item-label>{{ tickets }}</q-item-label>
+          <q-item-label>{{ $ticketStore.tickets.length }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-item clickable v-ripple>
@@ -86,7 +86,7 @@
 
         <q-item-section>Gains total</q-item-section>
         <q-item-section side>
-          <q-item-label>{{ gain }} ar</q-item-label>
+          <q-item-label>{{ priceWithSeparator }} ar</q-item-label>
         </q-item-section>
       </q-item>
     </q-card>
@@ -95,32 +95,14 @@
 
 <script setup lang="ts">
 import { useEventStore } from '@/stores/Event.store'
-import { watch, ref } from 'vue'
+import { useTicketStore } from '@/stores/Ticket.store'
+import { computed, watch } from 'vue'
+import { addSeparatorNumber } from '@/utils/utils'
 
 const $eventStore = useEventStore()
+const $ticketStore = useTicketStore()
 
-const totalEvent = ref<number>(0)
-const tickets = ref<number>(0)
-const gain = ref<number>(0)
-
-const recalculateData = () => {
-  totalEvent.value = $eventStore.all.length
-  $eventStore.all.forEach((ev) => {
-    if (ev.participants && ev.participants.length > 0) {
-      gain.value += ev.price * ev.participants.length
-      tickets.value += ev.participants.length
-    }
-  })
-}
-
-recalculateData()
-
-watch(
-  () => $eventStore.all,
-  () => {
-    recalculateData()
-  },
-)
+const priceWithSeparator = computed(() => addSeparatorNumber($ticketStore.totalPrice, 3, '.'))
 </script>
 
 <style scoped>

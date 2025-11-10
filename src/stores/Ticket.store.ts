@@ -2,7 +2,7 @@ import { secureAPI } from '@/instances/axios'
 import { defineStore } from 'pinia'
 import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
 import type { ITicket } from '@/interfaces/ITicket'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
@@ -12,8 +12,17 @@ import { ERole } from '@/enums/ERole'
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 
-export const userTicketStore = defineStore('ticket', () => {
+export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
+  let totalPrice = ref<number>(0)
+
+  watch(
+    () => tickets.value.length,
+    () => {
+      totalPrice.value = 0
+      tickets.value.forEach((t) => (totalPrice.value += t.price))
+    },
+  )
 
   const init = async () => {
     const $userStore = useUserStore()
@@ -35,5 +44,5 @@ export const userTicketStore = defineStore('ticket', () => {
     return response.data as ITicket[]
   }
 
-  return { init, getMyTickets, getTikectsForEvent, buy, tickets }
+  return { init, getMyTickets, getTikectsForEvent, buy, tickets, totalPrice }
 })
