@@ -10,7 +10,9 @@
       <q-item-section class="text-right text-bold">
         <q-item-label>
           <q-icon name="payments" color="green" />{{
-            props.event.price <= 0 ? 'gratuit' : props.event.price + ' Ar'
+            props.event.price <= 0
+              ? 'gratuit'
+              : addSeparatorNumber(props.event.price, 3, '.') + ' Ar'
           }}
         </q-item-label>
         <q-item-label caption>
@@ -125,6 +127,7 @@ import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
 import { useUserStore } from '@/stores/User.store'
 import { ERole } from '@/enums/ERole'
+import { addSeparatorNumber } from '@/utils/utils'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)

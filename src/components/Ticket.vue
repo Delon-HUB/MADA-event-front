@@ -12,7 +12,8 @@
             {{ new Date(props.ticket.createdAt!).toLocaleDateString() }}
           </q-item-label>
           <q-item-label>
-            <q-icon name="payments" color="green" /> prix: {{ event.price }} Ar
+            <q-icon name="payments" color="green" /> prix:
+            {{ event.price == 0 ? 'gratuit' : addSeparatorNumber(event.price, 3, '.') + 'Ar' }}
           </q-item-label>
           <q-item-label>
             <q-icon name="place" color="red" /> {{ event.location.split(',')[0] }}
@@ -45,6 +46,7 @@ import 'dayjs/locale/fr'
 import type { ITicket } from '@/interfaces/ITicket'
 import type { IEvent } from '@/interfaces/IEvent'
 import jsPDF from 'jspdf'
+import { addSeparatorNumber } from '@/utils/utils'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)

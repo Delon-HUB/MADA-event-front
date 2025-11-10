@@ -6,7 +6,7 @@
         rounded
         v-model="text"
         color="green"
-        placeholder="Que recherchez-vous ?"
+        placeholder="Entrer un titre ou lieu de l'événement..."
         clearable
       >
         <template v-slot:after
