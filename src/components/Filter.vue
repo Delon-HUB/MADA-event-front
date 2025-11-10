@@ -32,7 +32,7 @@
               <div>
                 <q-radio
                   size="xs"
-                  v-model="shape"
+                  v-model="shapeDate"
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   val="exactly"
@@ -40,7 +40,7 @@
                 />
                 <q-radio
                   size="xs"
-                  v-model="shape"
+                  v-model="shapeDate"
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   val="before"
@@ -48,7 +48,7 @@
                 />
                 <q-radio
                   size="xs"
-                  v-model="shape"
+                  v-model="shapeDate"
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   val="after"
@@ -56,7 +56,7 @@
                 />
                 <q-radio
                   size="xs"
-                  v-model="shape"
+                  v-model="shapeDate"
                   checked-icon="task_alt"
                   unchecked-icon="panorama_fish_eye"
                   val="between"
@@ -69,11 +69,47 @@
                   <div class="col q-mr-xs">
                     <q-input outlined v-model="startDateString" type="date" />
                   </div>
-                  <div class="col" v-if="shape == 'between'">
+                  <div class="col" v-if="shapeDate == 'between'">
                     <q-input outlined v-model="endDateString" type="date" />
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2">
+            <q-checkbox v-model="includes.price" />
+          </div>
+          <div class="col">
+            <div>
+              <q-radio
+                size="xs"
+                v-model="shapePrice"
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                val="equal"
+                label="Égale"
+              />
+              <q-radio
+                size="xs"
+                v-model="shapePrice"
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                val="greater"
+                label="Suprérieur à"
+              />
+              <q-radio
+                size="xs"
+                v-model="shapePrice"
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                val="less"
+                label="Inférieur à"
+              />
+            </div>
+            <div>
+              <q-input outlined v-model="event.price" type="number" label="Prix (Ariary)" />
             </div>
           </div>
         </div>
@@ -93,12 +129,15 @@ import { ref } from 'vue'
 
 let categories = ref<string[]>(Object.entries(ECategory).map((val) => val[1]))
 categories.value.unshift('Tous')
-const shape = ref<string>('between')
+const shapeDate = ref<string>('between')
+const shapePrice = ref<string>('equal')
+
 const model = defineModel<boolean>()
 
-const includes = ref<{ category: boolean; date: boolean }>({
+const includes = ref<{ category: boolean; date: boolean; price: boolean }>({
   category: false,
   date: false,
+  price: false,
 })
 
 const event = ref<Partial<IEvent>>({})
@@ -109,9 +148,12 @@ const emit = defineEmits(['finish'])
 
 const finish = () => {
   if (includes.value.date) {
-    event.value.description = shape.value
+    event.value.description = shapeDate.value
     event.value.startDate = new Date(startDateString.value || '')
     event.value.endDate = new Date(endDateString.value || '')
+  }
+  if (includes.value.price) {
+    event.value.address = shapePrice.value
   }
   emit('finish', includes.value, event.value)
 }

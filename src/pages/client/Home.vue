@@ -85,7 +85,10 @@ watch(
   },
 )
 
-const search = (options: { category: boolean; date: boolean }, event: Partial<IEvent>) => {
+const search = (
+  options: { category: boolean; date: boolean; price: boolean },
+  event: Partial<IEvent>,
+) => {
   searching.value = true
   searchResult.value = events.value
   if (options.category) {
@@ -124,6 +127,26 @@ const search = (options: { category: boolean; date: boolean }, event: Partial<IE
           searchResult.value = searchResult.value.filter((ev) =>
             dayjs(new Date(ev.startDate).toDateString()).isSame(startDate),
           )
+        }
+        break
+    }
+  }
+
+  if (options.price) {
+    switch (event.address) {
+      case 'greater':
+        {
+          searchResult.value = searchResult.value.filter((ev) => ev.price! > event.price!)
+        }
+        break
+      case 'less':
+        {
+          searchResult.value = searchResult.value.filter((ev) => ev.price! < event.price!)
+        }
+        break
+      case 'equal':
+        {
+          searchResult.value = searchResult.value.filter((ev) => ev.price! == event.price!)
         }
         break
     }
