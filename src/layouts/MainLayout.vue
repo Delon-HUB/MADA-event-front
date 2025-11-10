@@ -125,7 +125,7 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
 import { useEventStore } from '@/stores/Event.store'
 import { useNotificationStore } from '@/stores/Notification.store'
-import { userTicketStore } from '@/stores/Ticket.store'
+import { useTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
 import { onBeforeMount, ref, watch } from 'vue'
 
@@ -143,7 +143,7 @@ onBeforeMount(async () => {
   switch ($userStore.currentUser!.role) {
     case ERole.CLIENT:
       {
-        const $ticketStore = userTicketStore()
+        const $ticketStore = useTicketStore()
         await $ticketStore.init()
         router.replace('/client/home')
       }

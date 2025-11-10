@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 import Ticket from '@/components/Ticket.vue'
-import { userTicketStore } from '@/stores/Ticket.store'
+import { useTicketStore } from '@/stores/Ticket.store'
 
-const $ticketStore = userTicketStore()
+const $ticketStore = useTicketStore()
 $ticketStore.init()
 </script>
 
