@@ -26,7 +26,6 @@ import { useNotificationStore } from '@/stores/Notification.store'
 
 const $notificationStore = useNotificationStore()
 $notificationStore.unread = 0
-$notificationStore.init()
 </script>
 
 <style scoped>

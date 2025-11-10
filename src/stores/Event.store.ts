@@ -13,7 +13,6 @@ import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
 import { useTicketStore } from './Ticket.store'
 import type { IUser } from '@/interfaces/IUser'
 import { Notify } from 'quasar'
-import { useNotificationStore } from './Notification.store'
 import type { ITicket } from '@/interfaces/ITicket'
 
 dayjs.extend(relativeTime)
@@ -28,11 +27,10 @@ export const useEventStore = defineStore('event', () => {
 
   const $ticketStore = useTicketStore()
   const $userStore = useUserStore()
-  const $notificationStore = useNotificationStore()
 
   const init = async () => {
     await $userStore.init()
-    socket.connect()
+    if (!socket.connected) socket.connect()
 
     if ($userStore.currentUser!.role == ERole.CLIENT) {
       await fetchAll()
@@ -59,7 +57,6 @@ export const useEventStore = defineStore('event', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-        $notificationStore.unread++
       } else if ($userStore.currentUser?.role == ERole.ORGANIZER) {
         Notify.create({
           message: 'Nouveau participant',
@@ -70,7 +67,6 @@ export const useEventStore = defineStore('event', () => {
         })
         const event = all.value.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
         if (event) event.participants.push(newTicket.userId as IUser)
-        $notificationStore.unread++
       }
       $ticketStore.tickets.push(newTicket)
     })

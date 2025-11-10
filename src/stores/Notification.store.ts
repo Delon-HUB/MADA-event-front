@@ -1,4 +1,5 @@
 import { secureAPI } from '@/instances/axios'
+import socket from '@/instances/socket'
 import type { INotification } from '@/interfaces/INotification'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -8,6 +9,11 @@ export const useNotificationStore = defineStore('notification', () => {
   const unread = ref<number>(0)
 
   const init = async () => {
+    if (!socket.connected) socket.connect()
+    socket.on('newNotification', (notification: INotification) => {
+      notifications.value.unshift(notification)
+      unread.value++
+    })
     await getMyNotifications()
   }
 
