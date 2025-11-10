@@ -20,5 +20,10 @@ export const useUserStore = defineStore('user', () => {
     currentUser.value = _user
   }
 
-  return { getMyInformation, currentUser, init, setCurrentUser }
+  const findUserById = async (id: string): Promise<IUser | null> => {
+    const response = await secureAPI.post(`/user/userId`, { userId: id })
+    return response.data as Promise<IUser | null>
+  }
+
+  return { getMyInformation, currentUser, init, setCurrentUser, findUserById }
 })

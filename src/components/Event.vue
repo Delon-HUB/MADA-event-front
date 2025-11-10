@@ -35,7 +35,7 @@
       </q-item-section>
 
       <q-item-section>
-        <q-item-label>Nicolas Delon</q-item-label>
+        <q-item-label>{{ eventOwner?.firstName + ' ' + eventOwner?.lastName }}</q-item-label>
         <q-item-label caption> {{ createdAt }} </q-item-label>
       </q-item-section>
       <q-space />
@@ -127,7 +127,7 @@
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
 import Purchase from './Purchase.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
@@ -135,6 +135,7 @@ import 'dayjs/locale/fr'
 import { useUserStore } from '@/stores/User.store'
 import { ERole } from '@/enums/ERole'
 import { addSeparatorNumber } from '@/utils/utils'
+import type { IUser } from '@/interfaces/IUser'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -143,6 +144,7 @@ dayjs.locale('fr')
 const props = defineProps<{ event: IEvent }>()
 const userRole = ref<string>()
 const $userStore = useUserStore()
+const eventOwner = ref<IUser | null>(null)
 
 const remainingTickets = computed(() => props.event.capacity! - props.event.participants.length)
 
@@ -158,14 +160,21 @@ const showPurchageForm = ref<boolean>(false)
 const expandedDetails = ref(false)
 const expandedParticipants = ref(false)
 
-const photo = ref<string>(
-  `${import.meta.env.VITE_API_URL}/${props.event.photo}?ngrok-skip-browser-warning=true`,
-)
+const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`)
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
 
 let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
+
+onMounted(async () => {
+  const owner = await $userStore.findUserById(props.event.ownerId!)
+  if (owner) {
+    eventOwner.value = owner
+  }
+})
+
+const profilePic = computed(() => `${import.meta.env.VITE_API_URL + eventOwner.value?.photo}`)
 
 // const getImgAsBase64 = async () => {
 //   const url = photo.value
@@ -183,6 +192,4 @@ setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 10
 // }
 
 // getImgAsBase64()
-
-const profilePic = `${import.meta.env.VITE_API_URL}/public/profile/default.jpeg`
 </script>
