@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
-import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
+import type { IPayment as IPayment } from '@/interfaces/IPayment'
 import { useTicketStore } from './Ticket.store'
 import type { IUser } from '@/interfaces/IUser'
 import { Notify } from 'quasar'
@@ -100,7 +100,7 @@ export const useEventStore = defineStore('event', () => {
         const tickets = await $ticketStore.getTikectsForEvent(ev._id!)
         tickets.forEach((t) => {
           $ticketStore.tickets.push(t)
-          $ticketStore.totalPrice += t.price
+          // $ticketStore.totalPrice += t.price
         })
         ev.participants = tickets.map((t) => t.userId as IUser)
         return ev
@@ -123,7 +123,14 @@ export const useEventStore = defineStore('event', () => {
     }
   }
 
+  const findById = async (eventId: string) => {
+    const response = await secureAPI.get(`/event/${eventId}`)
+    const event = response.data as IEvent
+    return event
+  }
+
   const buy = async (payment: Partial<IPayment>) => {
+    // créer ticket
     const response = await secureAPI.post('/payment', payment)
     return response
   }
@@ -136,6 +143,7 @@ export const useEventStore = defineStore('event', () => {
     fetchAll,
     getEvents,
     buy,
+    findById,
     all,
     inProgress,
     coming,
