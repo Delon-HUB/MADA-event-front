@@ -11,10 +11,11 @@ export interface IEvent {
   startDate: Date
   endDate: Date
   price: number
-  capacity?: number
+  capacity: number
   ticketsAvailable?: number
-  ownerId?: string
-  participants: IUser[]
+  ownerId: string | IUser
+  ticketAvailable?: number
+  status?: 'UPCOMING' | 'ONGOING' | 'ENDED'
   createdAt?: Date
   updatedAt?: Date
 }
