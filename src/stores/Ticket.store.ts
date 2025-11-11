@@ -42,7 +42,7 @@ export const useTicketStore = defineStore('ticket', () => {
   const getMyPayments = async () => {
     const response = await secureAPI.get(`/payment/${$userStore.currentUser?._id}`)
     payments.value = response.data as IPayment[]
-    console.log(payments.value)
+    payments.value.reverse()
   }
 
   const createTicket = async (ticket: Partial<ITicket>, paymentMethode: string, phone: string) => {
