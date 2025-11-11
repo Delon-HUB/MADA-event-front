@@ -1,7 +1,6 @@
 import { secureAPI } from '@/instances/axios'
 import type { IEvent } from '@/interfaces/IEvent'
 import { defineStore } from 'pinia'
-import { useUserStore } from './User.store'
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'

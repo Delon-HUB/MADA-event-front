@@ -18,7 +18,7 @@
             }}
           </q-item-label>
           <q-item-label>
-            <q-icon name="place" color="red" /> {{ event?.location.split(',')[0] }}
+            <q-icon name="place" color="red" /> {{ event?.location?.split(',')[0] }}
           </q-item-label>
         </q-item-section>
       </q-card-section>

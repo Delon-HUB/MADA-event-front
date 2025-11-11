@@ -58,7 +58,7 @@ const searching = ref<boolean>(false)
 const showFilter = ref<boolean>(false)
 
 const $eventStore = useEventStore()
-const events = computed(() => $eventStore.inProgress.concat($eventStore.coming))
+const events = computed(() => $eventStore.all)
 const searchResult = ref<IEvent[]>([])
 watch(
   () => text.value,

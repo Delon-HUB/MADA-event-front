@@ -4,8 +4,10 @@
       <q-item-section class="text-bold">
         <q-item-label>
           <p class="text-bold">
-            {{ event.title }} <br /><span class="text-red text-caption" v-if="showTicketRemaining"
-              >{{ remainingTickets != 0 ? remainingTickets + ' billets restant' : 'Place complet' }}
+            {{ event.title }} <br /><span
+              class="text-red text-caption"
+              v-if="props.event.capacity && props.event.ticketAvailable! <= 10"
+              >{{ props.event.ticketAvailable! > 0 ? +' billets restant' : 'Place complet' }}
             </span>
           </p>
         </q-item-label>
@@ -51,16 +53,16 @@
     <q-card-actions>
       <div v-if="$userStore.currentUser!.role == ERole.CLIENT">
         <q-btn
-          v-if="props.event.capacity == 0 || remainingTickets > 0"
+          v-if="props.event.price != 0 && props.event.ticketAvailable"
           no-caps
           flat
           color="positive"
           icon="receipt"
-          @click="() => (showPurchageForm = true)"
-          >Acheter</q-btn
+          @click="() => (showPurchaseForm = true)"
+          >Obténir un billet</q-btn
         >
       </div>
-      <div v-else>
+      <div v-else-if="$userStore.currentUser?.role == ERole.ORGANIZER && props.event.price">
         <q-btn
           flat
           dense
@@ -100,7 +102,7 @@
     <q-slide-transition>
       <div v-show="expandedParticipants">
         <q-separator />
-        <q-card-section class="text-subtitle2">
+        <!-- <q-card-section class="text-subtitle2">
           <p v-if="props.event.participants?.length === 0" class="text-center text-overline">
             Aucun participant pour cet événement
           </p>
@@ -117,11 +119,11 @@
               </q-item-section>
             </q-item>
           </q-list>
-        </q-card-section>
+        </q-card-section> -->
       </div>
     </q-slide-transition>
 
-    <purchase :event="props.event" v-model="showPurchageForm" />
+    <purchase :event="props.event" v-model="showPurchaseForm" />
   </q-card>
 </template>
 <script setup lang="ts">
@@ -146,17 +148,11 @@ const userRole = ref<string>()
 const $userStore = useUserStore()
 const eventOwner = ref<IUser | null>(null)
 
-const remainingTickets = computed(() => props.event.capacity! - props.event.participants.length)
-
-const showTicketRemaining = computed(
-  () => props.event.capacity && props.event.capacity > 0 && remainingTickets.value <= 10,
-)
-
 watch(
   () => $userStore.currentUser,
   () => (userRole.value = $userStore.currentUser!.role),
 )
-const showPurchageForm = ref<boolean>(false)
+const showPurchaseForm = ref<boolean>(false)
 const expandedDetails = ref(false)
 const expandedParticipants = ref(false)
 
@@ -168,7 +164,7 @@ let createdAt = ref(dayjs(props.event.createdAt).fromNow())
 setInterval(() => (createdAt.value = dayjs(props.event.createdAt).fromNow()), 1000 * 60)
 
 onMounted(async () => {
-  const owner = await $userStore.findUserById(props.event.ownerId!)
+  const owner = await $userStore.findUserById(props.event.ownerId! as string)
   if (owner) {
     eventOwner.value = owner
   }

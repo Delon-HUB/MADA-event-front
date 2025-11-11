@@ -19,13 +19,13 @@
               :min="0"
               show-value
               class="text-white q-ma-md"
-              v-model="$eventStore.coming.length"
+              v-model="$eventStore.upcoming.length"
               size="64px"
               :thickness="0.2"
               color="black"
               center-color="light"
               track-color="grey-3"
-              ><span class="text-bold text-black">{{ $eventStore.coming.length }}</span></q-knob
+              ><span class="text-bold text-black">{{ $eventStore.upcoming.length }}</span></q-knob
             >
             <p class="text-bold">À venir</p>
           </q-card>
@@ -37,13 +37,13 @@
               :min="0"
               show-value
               class="text-white q-ma-md"
-              v-model="$eventStore.inProgress.length"
+              v-model="$eventStore.ongoing.length"
               size="64px"
               :thickness="0.2"
               color="green"
               center-color="light"
               track-color="grey-3"
-              ><span class="text-bold text-green">{{ $eventStore.inProgress.length }}</span></q-knob
+              ><span class="text-bold text-green">{{ $eventStore.ongoing.length }}</span></q-knob
             >
             <p class="text-bold">Encours</p>
           </q-card>
@@ -96,7 +96,7 @@
 <script setup lang="ts">
 import { useEventStore } from '@/stores/Event.store'
 import { useTicketStore } from '@/stores/Ticket.store'
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { addSeparatorNumber } from '@/utils/utils'
 
 const $eventStore = useEventStore()
