@@ -1,16 +1,69 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <div class="q-pa-md">
     <q-dialog v-model="model" persistent transition-show="scale" transition-hide="scale">
-      <q-card class="bg-teal text-white" style="width: 300px">
+      <q-card>
+        <q-card-section>
+          <q-header class="positif-color">
+            <q-toolbar>
+              <q-btn class="text-bold" flat no-caps icon="payments">Achat de billet</q-btn>
+              <q-space />
+              <q-btn flat v-close-popup round dense icon="cancel" />
+            </q-toolbar>
+          </q-header>
+        </q-card-section>
+        <q-card-section>
+          <p class="text-bold text-center">Nombre de billet</p>
+          <q-item>
+            <q-item-section class="text-bold">
+              <q-item-label>Enfants(3-12 ans) </q-item-label>
+              <q-item-label caption> 2.000ar </q-item-label>
+            </q-item-section>
+            <q-space />
+            <q-item-section class="text-bold">
+              <q-item-label>
+                <q-input type="number" outlined v-model="ticket.price" min="0" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section class="text-bold">
+              <q-item-label>Adulte(+18 ans) </q-item-label>
+              <q-item-label caption> 3.000ar </q-item-label>
+            </q-item-section>
+            <q-space />
+            <q-item-section class="text-bold">
+              <q-item-label>
+                <q-input type="number" outlined v-model="ticket.price" min="0" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section class="text-bold">
+              <q-item-label>Senior(+60 ans) </q-item-label>
+              <q-item-label caption> 5.000ar </q-item-label>
+            </q-item-section>
+            <q-space />
+            <q-item-section class="text-bold">
+              <q-item-label>
+                <q-input type="number" outlined v-model="ticket.price" min="0" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+        <div class="fit row wrap justify-center items-start content-start">
+          <p style="width: 70%">
+            <q-separator color="grey" />
+          </p>
+        </div>
         <q-card-section class="text-center">
           <p>
-            <span class="text-bold">Achat de billet</span><br /><span
+            <span class="text-bold">Paiement</span><br /><span
               >Choisissez votre opérateur mobile, puis entrer votre numéro de téléphone</span
             >
           </p>
         </q-card-section>
         <q-card-section class="row">
-          <q-tabs no-caps v-model="tab" indicator-color="positive">
+          <q-tabs no-caps v-model="tab" indicator-color="grey" class="full-width">
             <q-tab name="mvola"
               ><q-img
                 src="https://wiya.info/media/cache/resolve/logo_img/uploads/images/sellers/wiya-logo-mvola-66390b305746c359318575.png"
@@ -26,7 +79,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-tab-panels v-model="tab" animated class="bg-teal">
+          <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="mvola">
               <q-input
                 fill-mask="x"
@@ -62,7 +115,7 @@
           </q-tab-panels>
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions align="right">
           <q-btn outline color="dark" no-caps label="Annuler" v-close-popup />
           <q-btn outline color="green" no-caps label="Confirmer" @click="buy" :loading="loading" />
         </q-card-actions>
@@ -73,6 +126,7 @@
 
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
+import { type ITicket } from '@/interfaces/ITicket'
 import { useEventStore } from '@/stores/Event.store'
 import { ref } from 'vue'
 
@@ -83,6 +137,8 @@ const model = defineModel<boolean>()
 const props = defineProps<{ event: Partial<IEvent> }>()
 const tel = ref<string>()
 const tab = ref<string>('mvola')
+
+const ticket = ref<Partial<ITicket>>({})
 
 const buy = async () => {
   loading.value = true
@@ -97,3 +153,9 @@ const buy = async () => {
   model.value = false
 }
 </script>
+
+<style scoped>
+.positif-color {
+  background-color: #14452f;
+}
+</style>
