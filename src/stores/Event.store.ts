@@ -9,15 +9,11 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
 import 'dayjs/locale/fr'
-import type { IPayment as IPayment } from '@/interfaces/IPayment'
 import { useTicketStore } from './Ticket.store'
 import type { IUser } from '@/interfaces/IUser'
-import { Notify } from 'quasar'
-import type { ITicket } from '@/interfaces/ITicket'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
-dayjs.locale('fr')
 
 export const useEventStore = defineStore('event', () => {
   let all = ref<IEvent[]>([])
@@ -25,13 +21,9 @@ export const useEventStore = defineStore('event', () => {
   let inProgress = ref<IEvent[]>([])
   let terminated = ref<IEvent[]>([])
 
-  const $ticketStore = useTicketStore()
   const $userStore = useUserStore()
 
   const init = async () => {
-    await $userStore.init()
-    if (!socket.connected) socket.connect()
-
     if ($userStore.currentUser!.role == ERole.CLIENT) {
       await fetchAll()
     } else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
@@ -42,45 +34,6 @@ export const useEventStore = defineStore('event', () => {
     inProgress.value = []
     terminated.value = []
     all.value.forEach((ev) => repartition(ev))
-
-    socket.on('newEvent', (event: IEvent) => {
-      all.value.push(event)
-      repartition(event)
-    })
-
-    socket.on('ticketPaid', (newTicket: ITicket) => {
-      if ($userStore.currentUser?.role == ERole.ORGANIZER) {
-        Notify.create({
-          message: 'Nouveau participant',
-          position: 'top-right',
-          icon: 'information',
-          iconColor: 'green',
-          classes: 'bg-white text-black',
-        })
-      } else if (
-        $userStore.currentUser?.role == ERole.CLIENT &&
-        $userStore.currentUser?._id == newTicket.userId
-      ) {
-        Notify.create({
-          message: 'Achat de billet effectué',
-          position: 'top-right',
-          icon: 'checked',
-          iconColor: 'green',
-          classes: 'bg-white text-black',
-        })
-      }
-      const event = all.value.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
-      if (event) event.participants.push(newTicket.userId as IUser)
-      $ticketStore.tickets.push(newTicket)
-    })
-
-    socket.on('connect_error', () => {
-      setTimeout(() => {
-        socket.connect()
-      }, 30_000)
-    })
-    socket.on('connect', () => console.log(`${socket.id} connected`))
-    socket.on('disconnect', () => console.log(`${socket.id} disconnected`))
   }
 
   const fetchAll = async () => {
@@ -129,12 +82,6 @@ export const useEventStore = defineStore('event', () => {
     return event
   }
 
-  const buy = async (payment: Partial<IPayment>) => {
-    // créer ticket
-    const response = await secureAPI.post('/payment', payment)
-    return response
-  }
-
   const getEvents = () => all
 
   return {
@@ -142,8 +89,8 @@ export const useEventStore = defineStore('event', () => {
     getMyEvents,
     fetchAll,
     getEvents,
-    buy,
     findById,
+    repartition,
     all,
     inProgress,
     coming,

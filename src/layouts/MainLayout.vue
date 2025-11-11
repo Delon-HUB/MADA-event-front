@@ -9,7 +9,7 @@
     <q-footer bordered class="footer">
       <q-toolbar>
         <q-space></q-space>
-        <div class="toolbar" v-if="currentUser.role == ERole.CLIENT">
+        <div class="toolbar" v-if="$userStore.currentUser?.role == ERole.CLIENT">
           <q-btn flat no-caps dense icon="home" stack label="Découvrir" :to="'/client/home'" />
           <q-btn
             flat
@@ -57,7 +57,7 @@
             </q-list>
           </q-btn-dropdown>
         </div>
-        <div class="toolbar" v-if="currentUser.role == ERole.ORGANIZER">
+        <div class="toolbar" v-if="$userStore.currentUser?.role == ERole.ORGANIZER">
           <q-btn
             flat
             no-caps
@@ -120,39 +120,33 @@
 
 <script setup lang="ts">
 import { ERole } from '@/enums/ERole'
-import type { IUser } from '@/interfaces/IUser'
 import router from '@/router'
 import { useAuthStore } from '@/stores/Auth.store'
 import { useEventStore } from '@/stores/Event.store'
 import { useNotificationStore } from '@/stores/Notification.store'
 import { useTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
-import { onBeforeMount, ref, watch } from 'vue'
+import { onMounted } from 'vue'
 
+const $userStore = useUserStore()
+const $eventStore = useEventStore()
+const $ticketStore = useTicketStore()
 const $notificationStore = useNotificationStore()
 
-let currentUser = ref<Partial<IUser>>({})
-onBeforeMount(async () => {
-  const $userStore = useUserStore()
+onMounted(async () => {
   await $userStore.init()
-  if (!$userStore.currentUser) router.push('/auth/login')
-  currentUser.value = $userStore.currentUser!
-
-  const $eventStore = useEventStore()
   await $eventStore.init()
-  switch ($userStore.currentUser!.role) {
+  await $ticketStore.init()
+  await $notificationStore.init()
+  if (!$userStore.currentUser) router.push('/auth/login')
+  switch ($userStore.currentUser?.role) {
     case ERole.CLIENT:
-      {
-        const $ticketStore = useTicketStore()
-        await $ticketStore.init()
-        router.replace('/client/home')
-      }
+      router.replace('/client/home')
       break
     case ERole.ORGANIZER:
       router.replace('/organizer/dashboard')
       break
   }
-  await $notificationStore.init()
 })
 </script>
 <style scoped>

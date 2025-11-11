@@ -2,15 +2,10 @@ import { secureAPI } from '@/instances/axios'
 import { defineStore } from 'pinia'
 import type { IPayment as IPayment } from '@/interfaces/IPayment'
 import type { ITicket } from '@/interfaces/ITicket'
-import { computed, ref, watch } from 'vue'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import isBetween from 'dayjs/plugin/isBetween'
+import { ref, watch } from 'vue'
 import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
-
-dayjs.extend(relativeTime)
-dayjs.extend(isBetween)
+import socket from '@/instances/socket'
 
 export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
@@ -28,6 +23,7 @@ export const useTicketStore = defineStore('ticket', () => {
   // )
 
   const init = async () => {
+    if (!socket.connected) socket.connect()
     if ($userStore.currentUser!.role == ERole.CLIENT) {
       await getMyTickets()
       await getMyPayments()
