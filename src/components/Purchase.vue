@@ -16,7 +16,9 @@
           <q-item class="q-pt-none">
             <q-item-section class="text-bold">
               <q-item-label>Enfants(3-12 ans) </q-item-label>
-              <q-item-label caption> 2.000ar </q-item-label>
+              <q-item-label caption>
+                {{ addSeparatorNumber(props.event.price! * 0.5, 3, ' ') + 'Ar' }}
+              </q-item-label>
             </q-item-section>
             <q-space />
             <q-item-section class="text-bold">
@@ -58,7 +60,9 @@
           <q-item>
             <q-item-section class="text-bold">
               <q-item-label>Adulte(+18 ans) </q-item-label>
-              <q-item-label caption> 3.000ar </q-item-label>
+              <q-item-label caption>
+                {{ addSeparatorNumber(props.event.price!, 3, ' ') + 'Ar' }}
+              </q-item-label>
             </q-item-section>
             <q-space />
             <q-item-section class="text-bold">
@@ -100,7 +104,9 @@
           <q-item>
             <q-item-section class="text-bold">
               <q-item-label>Senior(+60 ans) </q-item-label>
-              <q-item-label caption> 5.000ar </q-item-label>
+              <q-item-label caption>
+                {{ addSeparatorNumber(props.event.price! * 0.8, 3, ' ') + 'Ar' }}
+              </q-item-label>
             </q-item-section>
             <q-space />
             <q-item-section class="text-bold">
@@ -139,8 +145,11 @@
               </q-item-label>
             </q-item-section>
           </q-item>
+          <p class="text-bold q-mx-md">
+            Total = {{ addSeparatorNumber(totalPrice, 3, ' ') + ' Ar' }}
+          </p>
         </q-card-section>
-        <div class="fit row wrap justify-center items-start content-start">
+        <div class="fit row wrap justify-center items-start content-start q-mt-none">
           <p style="width: 70%">
             <q-separator color="black" />
           </p>
@@ -217,7 +226,8 @@ import type { IEvent } from '@/interfaces/IEvent'
 import { type ITicket } from '@/interfaces/ITicket'
 import { useTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
-import { ref } from 'vue'
+import { addSeparatorNumber } from '@/utils/utils'
+import { ref, computed } from 'vue'
 
 const loading = ref<boolean>(false)
 const $userStore = useUserStore()
@@ -235,7 +245,12 @@ const ticket = ref<Partial<ITicket>>({
   nbAdult: 0,
   nbSenior: 0,
 })
-
+const totalPrice = computed(
+  () =>
+    ticket.value.nbChild! * props.event.price! * 0.5 +
+    ticket.value.nbAdult! * props.event.price! +
+    ticket.value.nbSenior! * props.event.price! * 0.8,
+)
 const buy = async () => {
   loading.value = true
   const response = await $ticketStore.createTicket(ticket.value, paymentMethode.value, tel.value)
