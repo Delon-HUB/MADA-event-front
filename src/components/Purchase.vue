@@ -13,7 +13,7 @@
         </q-card-section>
         <q-card-section>
           <p class="text-bold text-center">Nombre de billet</p>
-          <q-item>
+          <q-item class="q-pt-none">
             <q-item-section class="text-bold">
               <q-item-label>Enfants(3-12 ans) </q-item-label>
               <q-item-label caption> 2.000ar </q-item-label>
@@ -55,14 +55,12 @@
             <q-separator color="grey" />
           </p>
         </div>
-        <q-card-section class="text-center">
+        <q-card-section class="text-center q-pa-none">
           <p>
             <span class="text-bold">Paiement</span><br /><span
               >Choisissez votre opérateur mobile, puis entrer votre numéro de téléphone</span
             >
           </p>
-        </q-card-section>
-        <q-card-section class="row">
           <q-tabs no-caps v-model="tab" indicator-color="grey" class="full-width">
             <q-tab name="mvola"
               ><q-img
@@ -78,7 +76,7 @@
           </q-tabs>
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
+        <q-card-section class="q-pa-none">
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="mvola">
               <q-input
