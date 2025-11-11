@@ -21,7 +21,34 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input type="number" outlined v-model="ticket.price" min="0" />
+                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                  <template v-slot:prepend>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="remove"
+                      color="grey"
+                      class="bg-grey-3"
+                      @click="
+                        () =>
+                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                      "
+                    />
+                  </template>
+                  <template v-slot:append>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="add"
+                      color="green"
+                      class="bg-light-green-1"
+                      @click="
+                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                      "
+                    /> </template
+                ></q-input>
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -33,7 +60,34 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input type="number" outlined v-model="ticket.price" min="0" />
+                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                  <template v-slot:prepend>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="remove"
+                      color="grey"
+                      class="bg-grey-3"
+                      @click="
+                        () =>
+                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                      "
+                    />
+                  </template>
+                  <template v-slot:append>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="add"
+                      color="green"
+                      class="bg-light-green-1"
+                      @click="
+                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                      "
+                    /> </template
+                ></q-input>
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -45,14 +99,41 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input type="number" outlined v-model="ticket.price" min="0" />
+                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                  <template v-slot:prepend>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="remove"
+                      color="grey"
+                      class="bg-grey-3"
+                      @click="
+                        () =>
+                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                      "
+                    />
+                  </template>
+                  <template v-slot:append>
+                    <q-btn
+                      rounded
+                      dense
+                      flat
+                      icon="add"
+                      color="green"
+                      class="bg-light-green-1"
+                      @click="
+                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                      "
+                    /> </template
+                ></q-input>
               </q-item-label>
             </q-item-section>
           </q-item>
         </q-card-section>
         <div class="fit row wrap justify-center items-start content-start">
           <p style="width: 70%">
-            <q-separator color="grey" />
+            <q-separator color="black" />
           </p>
         </div>
         <q-card-section class="text-center q-pa-none">
@@ -61,7 +142,7 @@
               >Choisissez votre opérateur mobile, puis entrer votre numéro de téléphone</span
             >
           </p>
-          <q-tabs no-caps v-model="tab" indicator-color="grey" class="full-width">
+          <q-tabs no-caps v-model="tab" indicator-color="positive" class="full-width">
             <q-tab name="mvola"
               ><q-img
                 src="https://wiya.info/media/cache/resolve/logo_img/uploads/images/sellers/wiya-logo-mvola-66390b305746c359318575.png"
