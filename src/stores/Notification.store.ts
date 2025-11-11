@@ -9,7 +9,6 @@ import { useEventStore } from './Event.store'
 import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
 import { Notify } from 'quasar'
-import type { IUser } from '@/interfaces/IUser'
 import { useTicketStore } from './Ticket.store'
 
 export const useNotificationStore = defineStore('notification', () => {
@@ -56,7 +55,6 @@ export const useNotificationStore = defineStore('notification', () => {
         })
       }
       const event = $eventStore.all.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
-      if (event) event.participants.push(newTicket.userId as IUser)
       $ticketStore.tickets.push(newTicket)
     })
 
