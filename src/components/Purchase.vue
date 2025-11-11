@@ -21,7 +21,7 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                <q-input color="green" type="number" outlined v-model="ticket.nbChild" min="0">
                   <template v-slot:prepend>
                     <q-btn
                       rounded
@@ -32,7 +32,9 @@
                       class="bg-grey-3"
                       @click="
                         () =>
-                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                          ticket.nbChild && ticket.nbChild > 0
+                            ? ticket.nbChild--
+                            : (ticket.nbChild = 0)
                       "
                     />
                   </template>
@@ -45,7 +47,8 @@
                       color="green"
                       class="bg-light-green-1"
                       @click="
-                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                        () =>
+                          ticket.nbChild != undefined ? ticket.nbChild++ : (ticket.nbChild = 0)
                       "
                     /> </template
                 ></q-input>
@@ -60,7 +63,7 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                <q-input color="green" type="number" outlined v-model="ticket.nbAdult" min="0">
                   <template v-slot:prepend>
                     <q-btn
                       rounded
@@ -71,7 +74,9 @@
                       class="bg-grey-3"
                       @click="
                         () =>
-                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                          ticket.nbAdult && ticket.nbAdult > 0
+                            ? ticket.nbAdult--
+                            : (ticket.nbAdult = 0)
                       "
                     />
                   </template>
@@ -84,7 +89,8 @@
                       color="green"
                       class="bg-light-green-1"
                       @click="
-                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                        () =>
+                          ticket.nbAdult != undefined ? ticket.nbAdult++ : (ticket.nbAdult = 0)
                       "
                     /> </template
                 ></q-input>
@@ -99,7 +105,7 @@
             <q-space />
             <q-item-section class="text-bold">
               <q-item-label>
-                <q-input color="green" type="number" outlined v-model="ticket.price" min="0">
+                <q-input color="green" type="number" outlined v-model="ticket.nbSenior" min="0">
                   <template v-slot:prepend>
                     <q-btn
                       rounded
@@ -110,7 +116,9 @@
                       class="bg-grey-3"
                       @click="
                         () =>
-                          ticket.price && ticket.price > 0 ? ticket.price-- : (ticket.price = 0)
+                          ticket.nbSenior && ticket.nbSenior > 0
+                            ? ticket.nbSenior--
+                            : (ticket.nbSenior = 0)
                       "
                     />
                   </template>
@@ -123,7 +131,8 @@
                       color="green"
                       class="bg-light-green-1"
                       @click="
-                        () => (ticket.price != undefined ? ticket.price++ : (ticket.price = 0))
+                        () =>
+                          ticket.nbSenior != undefined ? ticket.nbSenior++ : (ticket.nbSenior = 0)
                       "
                     /> </template
                 ></q-input>
@@ -142,7 +151,7 @@
               >Choisissez votre opérateur mobile, puis entrer votre numéro de téléphone</span
             >
           </p>
-          <q-tabs no-caps v-model="tab" indicator-color="positive" class="full-width">
+          <q-tabs no-caps v-model="paymentMethode" indicator-color="positive" class="full-width">
             <q-tab name="mvola"
               ><q-img
                 src="https://wiya.info/media/cache/resolve/logo_img/uploads/images/sellers/wiya-logo-mvola-66390b305746c359318575.png"
@@ -158,7 +167,7 @@
         </q-card-section>
 
         <q-card-section class="q-pa-none">
-          <q-tab-panels v-model="tab" animated>
+          <q-tab-panels v-model="paymentMethode" animated>
             <q-tab-panel name="mvola">
               <q-input
                 fill-mask="x"
@@ -206,27 +215,30 @@
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
 import { type ITicket } from '@/interfaces/ITicket'
-import { useEventStore } from '@/stores/Event.store'
+import { useTicketStore } from '@/stores/Ticket.store'
+import { useUserStore } from '@/stores/User.store'
 import { ref } from 'vue'
 
 const loading = ref<boolean>(false)
-const $eventStore = useEventStore()
+const $userStore = useUserStore()
+const $ticketStore = useTicketStore()
 
 const model = defineModel<boolean>()
 const props = defineProps<{ event: Partial<IEvent> }>()
-const tel = ref<string>()
-const tab = ref<string>('mvola')
+const tel = ref<string>('')
+const paymentMethode = ref<string>('mvola')
 
-const ticket = ref<Partial<ITicket>>({})
+const ticket = ref<Partial<ITicket>>({
+  userId: $userStore.currentUser!._id,
+  eventId: props.event._id!,
+  nbChild: 0,
+  nbAdult: 0,
+  nbSenior: 0,
+})
 
 const buy = async () => {
   loading.value = true
-  const response = await $eventStore.buy({
-    eventId: props.event._id!,
-    method: tab.value,
-    phoneNumber: tel.value,
-    amount: props.event.price,
-  })
+  const response = await $ticketStore.createTicket(ticket.value, paymentMethode.value, tel.value)
   loading.value = false
   tel.value = ''
   model.value = false

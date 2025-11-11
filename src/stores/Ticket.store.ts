@@ -1,6 +1,6 @@
 import { secureAPI } from '@/instances/axios'
 import { defineStore } from 'pinia'
-import type { ICreatePaymentDto as IPayment } from '@/interfaces/IPayment'
+import type { IPayment as IPayment } from '@/interfaces/IPayment'
 import type { ITicket } from '@/interfaces/ITicket'
 import { computed, ref, watch } from 'vue'
 import dayjs from 'dayjs'
@@ -16,13 +16,13 @@ export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
   let totalPrice = ref<number>(0)
 
-  watch(
-    () => tickets.value.length,
-    () => {
-      totalPrice.value = 0
-      tickets.value.forEach((t) => (totalPrice.value += t.price))
-    },
-  )
+  // watch(
+  //   () => tickets.value.length,
+  //   () => {
+  //     totalPrice.value = 0
+  //     tickets.value.forEach((t) => (totalPrice.value += t.price))
+  //   },
+  // )
 
   const init = async () => {
     const $userStore = useUserStore()
@@ -34,9 +34,14 @@ export const useTicketStore = defineStore('ticket', () => {
     tickets.value = response.data as ITicket[]
   }
 
-  const buy = async (payment: Partial<IPayment>) => {
-    const response = await secureAPI.post('/payment', payment)
-    return response
+  const createTicket = async (ticket: Partial<ITicket>, paymentMethode: string, phone: string) => {
+    const ticketCreated = (await secureAPI.post('/ticket', ticket)).data as ITicket
+    const paymentData: Partial<IPayment> = {
+      ticketId: ticketCreated._id!,
+      method: paymentMethode,
+      phoneNumber: phone,
+    }
+    const payment = (await secureAPI.post('/payment', paymentData)).data as IPayment
   }
 
   const getTikectsForEvent = async (eventId: string) => {
@@ -44,5 +49,5 @@ export const useTicketStore = defineStore('ticket', () => {
     return response.data as ITicket[]
   }
 
-  return { init, getMyTickets, getTikectsForEvent, buy, tickets, totalPrice }
+  return { init, getMyTickets, getTikectsForEvent, createTicket, tickets, totalPrice }
 })
