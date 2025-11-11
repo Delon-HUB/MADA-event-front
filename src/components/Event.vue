@@ -53,7 +53,7 @@
     <q-card-actions>
       <div v-if="$userStore.currentUser!.role == ERole.CLIENT">
         <q-btn
-          v-if="props.event.price != 0 && props.event.ticketAvailable"
+          v-if="props.event.capacity > 0 && props.event.ticketAvailable"
           no-caps
           flat
           color="positive"
