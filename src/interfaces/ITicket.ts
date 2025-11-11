@@ -5,9 +5,10 @@ export interface ITicket {
   _id?: string
   userId: string | IUser
   eventId: string | IEvent
-  price: number
-  paymentStatus: 'PENDING' | 'PAID' | 'CANCELLED'
-  paymentMethod?: string
+  nbChild: number
+  nbAdult: number
+  nbSenior: number
+  status?: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED'
   qrCodeUrl?: string
   createdAt?: Date
   updatedAt?: Date

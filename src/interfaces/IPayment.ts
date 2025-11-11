@@ -1,7 +1,8 @@
-export interface ICreatePaymentDto {
+import type { ITicket } from './ITicket'
+
+export interface IPayment {
   _id?: string
-  eventId: string
-  userId: string
+  ticketId: string | ITicket
   amount: number
   method: string
   phoneNumber: string
