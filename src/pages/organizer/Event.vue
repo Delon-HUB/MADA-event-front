@@ -23,17 +23,27 @@
     </q-header>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
+        <p v-if="!$eventStore.all.length" class="text-center text-overline">Aucun événement...</p>
         <Event v-for="event in $eventStore.all" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        <Event v-for="event in $eventStore.coming" :event="event" class="q-mb-xs" />
+        <p v-if="!$eventStore.upcoming.length" class="text-center text-overline">
+          Aucun événement...
+        </p>
+        <Event v-for="event in $eventStore.upcoming" :event="event" class="q-mb-xs" />
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
-        <Event v-for="event in $eventStore.inProgress" :event="event" class="q-mb-xs" />
+        <p v-if="!$eventStore.ongoing.length" class="text-center text-overline">
+          Aucun événement...
+        </p>
+        <Event v-for="event in $eventStore.ongoing" :event="event" class="q-mb-xs" />
       </q-tab-panel>
       <q-tab-panel name="tab4">
+        <p v-if="!$eventStore.terminated.length" class="text-center text-overline">
+          Aucun événement...
+        </p>
         <Event v-for="event in $eventStore.terminated" :event="event" class="q-mb-xs" />
       </q-tab-panel>
     </q-tab-panels>
