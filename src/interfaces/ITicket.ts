@@ -9,7 +9,6 @@ export interface ITicket {
   nbAdult: number
   nbSenior: number
   status?: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED'
-  qrCodeUrl?: string
   createdAt?: Date
   updatedAt?: Date
 }

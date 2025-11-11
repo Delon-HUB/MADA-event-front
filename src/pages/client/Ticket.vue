@@ -4,7 +4,7 @@
       <div class="text-h6 text-bold"><q-icon name="receipt" />Mes billets</div>
     </q-header>
     <q-list>
-      <Ticket v-for="ticket in $ticketStore.tickets" :ticket="ticket" class="q-ma-sm" />
+      <Ticket v-for="payment in $ticketStore.payments" :payment="payment" class="q-ma-sm" />
     </q-list>
   </q-page>
 </template>
@@ -14,7 +14,6 @@ import Ticket from '@/components/Ticket.vue'
 import { useTicketStore } from '@/stores/Ticket.store'
 
 const $ticketStore = useTicketStore()
-$ticketStore.init()
 </script>
 
 <style scoped>

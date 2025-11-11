@@ -6,6 +6,7 @@ export interface IPayment {
   amount: number
   method: string
   phoneNumber: string
+  qrCodeUrl?: string
   status?: string
   createdAt?: Date
   updatedAt?: Date

@@ -14,7 +14,10 @@ dayjs.extend(isBetween)
 
 export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
+  let payments = ref<IPayment[]>([])
+
   let totalPrice = ref<number>(0)
+  const $userStore = useUserStore()
 
   // watch(
   //   () => tickets.value.length,
@@ -25,13 +28,21 @@ export const useTicketStore = defineStore('ticket', () => {
   // )
 
   const init = async () => {
-    const $userStore = useUserStore()
-    if ($userStore.currentUser!.role == ERole.CLIENT) await getMyTickets()
+    if ($userStore.currentUser!.role == ERole.CLIENT) {
+      await getMyTickets()
+      await getMyPayments()
+    }
   }
 
   const getMyTickets = async () => {
     const response = await secureAPI.post('/ticket/mine')
     tickets.value = response.data as ITicket[]
+  }
+
+  const getMyPayments = async () => {
+    const response = await secureAPI.get(`/payment/${$userStore.currentUser?._id}`)
+    payments.value = response.data as IPayment[]
+    console.log(payments.value)
   }
 
   const createTicket = async (ticket: Partial<ITicket>, paymentMethode: string, phone: string) => {
@@ -49,5 +60,5 @@ export const useTicketStore = defineStore('ticket', () => {
     return response.data as ITicket[]
   }
 
-  return { init, getMyTickets, getTikectsForEvent, createTicket, tickets, totalPrice }
+  return { init, getMyTickets, getTikectsForEvent, createTicket, payments, tickets, totalPrice }
 })
