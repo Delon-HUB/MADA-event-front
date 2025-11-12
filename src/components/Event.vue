@@ -7,7 +7,11 @@
             {{ event.title }} <br /><span
               class="text-red text-caption"
               v-if="props.event.capacity && props.event.ticketAvailable! <= 10"
-              >{{ props.event.ticketAvailable! > 0 ? +' billets restant' : 'Place complet' }}
+              >{{
+                props.event.ticketAvailable! > 0
+                  ? `${props.event.ticketAvailable} billets restant `
+                  : 'Place complet'
+              }}
             </span>
           </p>
         </q-item-label>
