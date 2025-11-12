@@ -10,6 +10,7 @@ import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
 import { Notify } from 'quasar'
 import { useTicketStore } from './Ticket.store'
+import type { IPayment } from '@/interfaces/IPayment'
 
 export const useNotificationStore = defineStore('notification', () => {
   const notifications = ref<INotification[]>([])
@@ -33,7 +34,7 @@ export const useNotificationStore = defineStore('notification', () => {
       $eventStore.repartition(event)
     })
 
-    socket.on('ticketPaid', (newTicket: ITicket) => {
+    socket.on('ticketPaid', (payment: IPayment) => {
       if ($userStore.currentUser?.role == ERole.ORGANIZER) {
         Notify.create({
           message: 'Nouveau participant',
@@ -44,7 +45,7 @@ export const useNotificationStore = defineStore('notification', () => {
         })
       } else if (
         $userStore.currentUser?.role == ERole.CLIENT &&
-        $userStore.currentUser?._id == newTicket.userId
+        $userStore.currentUser?._id == payment.userId
       ) {
         Notify.create({
           message: 'Achat de billet effectué',
@@ -53,9 +54,12 @@ export const useNotificationStore = defineStore('notification', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
+        ;(payment.ticketId as ITicket).eventId = (
+          (payment.ticketId as ITicket).eventId as IEvent
+        )._id!
       }
-      const event = $eventStore.all.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
-      // $ticketStore.tickets.push(newTicket)
+      $ticketStore.payments.unshift(payment)
+      $ticketStore.tickets.unshift(payment.ticketId as ITicket)
     })
 
     socket.on('connect_error', () => {

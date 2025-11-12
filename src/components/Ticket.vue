@@ -8,17 +8,27 @@
             {{ event?.title }}
           </q-item-label>
           <q-item-label class="text-bold">
-            <q-icon name="calendar_month" />
+            <q-icon size="24px" name="calendar_month" />
             {{ new Date(props.payment.createdAt!).toLocaleDateString() }}
           </q-item-label>
           <q-item-label>
-            <q-icon name="payments" color="green" /> prix:
+            <q-icon size="24px" name="place" color="red" /> {{ event?.location?.split(',')[0] }}
+          </q-item-label>
+          <q-item-label>
+            <q-img :ratio="4 / 4" width="24px" height="24px" :src="paymentMethodeLogo" />
+
             {{
-              event?.price == 0 ? 'gratuit' : addSeparatorNumber(event?.price ?? 0, 3, '.') + 'Ar'
+              event?.price == 0
+                ? 'gratuit'
+                : 'montant : ' + addSeparatorNumber(payment.amount, 3, '.') + 'Ar'
             }}
           </q-item-label>
           <q-item-label>
-            <q-icon name="place" color="red" /> {{ event?.location?.split(',')[0] }}
+            <q-icon name="phone_enabled" size="24px" /> {{ payment.phoneNumber }}
+          </q-item-label>
+          <q-item-label>
+            {{ ticket?.nbChild }}🧒🏻 + {{ ticket?.nbAdult }}👨🏻‍💼 + {{ ticket?.nbSenior }}👴🏻 =
+            {{ ticket?.nbChild + ticket?.nbAdult + ticket?.nbSenior }}
           </q-item-label>
         </q-item-section>
       </q-card-section>
@@ -40,7 +50,7 @@
   </q-card>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import isBetween from 'dayjs/plugin/isBetween'
@@ -60,6 +70,15 @@ const expanded = ref(false)
 const props = defineProps<{ payment: IPayment }>()
 const $eventStore = useEventStore()
 const event = ref<IEvent>()
+const ticket = ref<ITicket>(props.payment.ticketId as ITicket)
+const paymentMethodeLogo = computed(() => {
+  if (props.payment.method == 'mvola')
+    return 'https://wiya.info/media/cache/resolve/logo_img/uploads/images/sellers/wiya-logo-mvola-66390b305746c359318575.png'
+  else if (props.payment.method == 'airtel-money')
+    return 'https://univ-utb.com/wp-content/uploads/2016/10/AIRTELLOGO.png'
+  else if (props.payment.method == 'orange-money')
+    return 'https://images.seeklogo.com/logo-png/44/1/orange-money-logo-png_seeklogo-440383.png'
+})
 
 onBeforeMount(async () => {
   const ev = await $eventStore.findById((props.payment.ticketId as ITicket).eventId as string)

@@ -40,6 +40,7 @@ export const useTicketStore = defineStore('ticket', () => {
           if (p.length > 0) payments.value = payments.value.concat(p)
         }),
       )
+      tickets.value = tickets.value.reverse()
     }
   }
 
