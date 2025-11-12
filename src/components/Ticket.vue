@@ -81,8 +81,13 @@ const paymentMethodeLogo = computed(() => {
 })
 
 onBeforeMount(async () => {
-  const ev = await $eventStore.findById((props.payment.ticketId as ITicket).eventId as string)
-  event.value = ev
+  const eventId =
+    typeof ticket.value.eventId == 'string'
+      ? ticket.value.eventId
+      : ((props.payment.ticketId as ITicket).eventId as IEvent)._id?.toString()
+  if (typeof ticket.value.eventId == 'string') {
+    event.value = await $eventStore.findById(eventId!)
+  } else if (typeof ticket.value.eventId == 'object') event.value = ticket.value.eventId as IEvent
 })
 const qrCode = ref<string>(`${import.meta.env.VITE_API_URL}/${props.payment.qrCodeUrl}`)
 

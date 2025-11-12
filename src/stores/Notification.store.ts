@@ -54,12 +54,13 @@ export const useNotificationStore = defineStore('notification', () => {
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
-        ;(payment.ticketId as ITicket).eventId = (
-          (payment.ticketId as ITicket).eventId as IEvent
-        )._id!
       }
       $ticketStore.payments.unshift(payment)
       $ticketStore.tickets.unshift(payment.ticketId as ITicket)
+      const index = $eventStore.all.findIndex(
+        (ev) => ev._id == ((payment.ticketId as ITicket).eventId as IEvent)._id,
+      )
+      $eventStore.all[index] = (payment.ticketId as ITicket).eventId as IEvent
     })
 
     socket.on('connect_error', () => {
