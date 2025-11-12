@@ -194,7 +194,6 @@ const showParticipants = () => {
   if (expandedParticipants.value) {
     const tickets = $ticketStore.tickets.filter((t) => t.eventId == props.event._id)
     ticketsForThis.value = tickets
-    console.log(tickets)
   }
 }
 

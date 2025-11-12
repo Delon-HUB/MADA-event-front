@@ -102,7 +102,7 @@ import { addSeparatorNumber } from '@/utils/utils'
 const $eventStore = useEventStore()
 const $ticketStore = useTicketStore()
 
-const priceWithSeparator = computed(() => addSeparatorNumber($ticketStore.totalPrice, 3, '.'))
+const priceWithSeparator = computed(() => addSeparatorNumber($ticketStore.gain, 3, '.'))
 </script>
 
 <style scoped>
