@@ -196,7 +196,9 @@ const showParticipants = () => {
   expandedParticipants.value = !expandedParticipants.value
   expandedDetails.value = false
   if (expandedParticipants.value) {
-    const tickets = $ticketStore.tickets.filter((t) => t.eventId == props.event._id)
+    const tickets = $ticketStore.tickets.filter(
+      (t) => t.eventId == props.event._id || (t.eventId as IEvent)._id == props.event._id,
+    )
     ticketsForThis.value = tickets
   }
 }
