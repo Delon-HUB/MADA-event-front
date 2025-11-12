@@ -55,7 +55,7 @@ export const useNotificationStore = defineStore('notification', () => {
         })
       }
       const event = $eventStore.all.find((ev) => ev._id == (newTicket.eventId as IEvent)._id)
-      $ticketStore.tickets.push(newTicket)
+      // $ticketStore.tickets.push(newTicket)
     })
 
     socket.on('connect_error', () => {

@@ -69,12 +69,7 @@
           no-caps
           label="Participants"
           :icon-right="expandedParticipants ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-          @click="
-            () => {
-              expandedParticipants = !expandedParticipants
-              expandedDetails = false
-            }
-          "
+          @click="showParticipants"
         />
       </div>
       <q-space />
@@ -102,24 +97,41 @@
     <q-slide-transition>
       <div v-show="expandedParticipants">
         <q-separator />
-        <!-- <q-card-section class="text-subtitle2">
-          <p v-if="props.event.participants?.length === 0" class="text-center text-overline">
+        <q-card-section class="text-subtitle2" style="max-height: 250px; overflow: auto">
+          <p v-if="ticketsForThis.length <= 0" class="text-center text-overline">
             Aucun participant pour cet événement
           </p>
-          <q-list v-else>
-            <q-item v-for="user in props.event.participants">
-              <q-item-section avatar>
-                <q-avatar>
-                  <img :src="profilePic" />
-                </q-avatar>
-              </q-item-section>
+          <div v-else>
+            <q-item class="q-pa-none text-bold">
               <q-item-section>
-                <q-item-label>{{ user.firstName + ' ' + user?.lastName }}</q-item-label>
-                <q-item-label caption> {{ user.email }} </q-item-label>
+                <q-item-label>Acheteur</q-item-label>
+              </q-item-section>
+              <q-space />
+              <q-item-section>
+                <q-item-label class="text-right">personne / billet</q-item-label>
               </q-item-section>
             </q-item>
-          </q-list>
-        </q-card-section> -->
+            <q-list>
+              <q-item v-for="t in ticketsForThis" class="q-pa-none">
+                <q-item-section avatar>
+                  <q-avatar>
+                    <img :src="profilePic" />
+                  </q-avatar>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{
+                    (t.userId as IUser).firstName + ' ' + (t.userId as IUser)?.lastName
+                  }}</q-item-label>
+                  <q-item-label caption> {{ (t.userId as IUser).email }} </q-item-label>
+                </q-item-section>
+                <q-space />
+                <q-item-section class="text-right">
+                  <q-item-label>{{ t.nbAdult + t.nbChild + t.nbSenior }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </q-card-section>
       </div>
     </q-slide-transition>
 
@@ -138,6 +150,8 @@ import { useUserStore } from '@/stores/User.store'
 import { ERole } from '@/enums/ERole'
 import { addSeparatorNumber } from '@/utils/utils'
 import type { IUser } from '@/interfaces/IUser'
+import { useTicketStore } from '@/stores/Ticket.store'
+import type { ITicket } from '@/interfaces/ITicket'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -147,6 +161,8 @@ const props = defineProps<{ event: IEvent }>()
 const userRole = ref<string>()
 const $userStore = useUserStore()
 const eventOwner = ref<IUser | null>(null)
+const $ticketStore = useTicketStore()
+const ticketsForThis = ref<ITicket[]>([])
 
 watch(
   () => $userStore.currentUser,
@@ -171,6 +187,16 @@ onMounted(async () => {
 })
 
 const profilePic = computed(() => `${import.meta.env.VITE_API_URL + eventOwner.value?.photo}`)
+
+const showParticipants = () => {
+  expandedParticipants.value = !expandedParticipants.value
+  expandedDetails.value = false
+  if (expandedParticipants.value) {
+    const tickets = $ticketStore.tickets.filter((t) => t.eventId == props.event._id)
+    ticketsForThis.value = tickets
+    console.log(tickets)
+  }
+}
 
 // const getImgAsBase64 = async () => {
 //   const url = photo.value

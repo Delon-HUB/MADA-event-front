@@ -35,21 +35,6 @@ export const useEventStore = defineStore('event', () => {
     return response.data as IEvent[]
   }
 
-  const fetchParticipants = async (): Promise<IEvent[]> => {
-    const $ticketStore = useTicketStore()
-    const res = await Promise.all(
-      all.value.map(async (ev) => {
-        const tickets = await $ticketStore.getTikectsForEvent(ev._id!)
-        tickets.forEach((t) => {
-          $ticketStore.tickets.push(t)
-          // $ticketStore.totalPrice += t.price
-        })
-        return ev
-      }),
-    )
-    return res
-  }
-
   const repartition = (event: IEvent) => {
     if (event.status == 'UPCOMING') upcoming.value.push(event)
     else if (event.status == 'ONGOING') ongoing.value.push(event)

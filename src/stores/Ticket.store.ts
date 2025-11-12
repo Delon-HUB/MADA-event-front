@@ -2,10 +2,11 @@ import { secureAPI } from '@/instances/axios'
 import { defineStore } from 'pinia'
 import type { IPayment as IPayment } from '@/interfaces/IPayment'
 import type { ITicket } from '@/interfaces/ITicket'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
 import socket from '@/instances/socket'
+import { useEventStore } from './Event.store'
 
 export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
@@ -13,20 +14,20 @@ export const useTicketStore = defineStore('ticket', () => {
 
   let totalPrice = ref<number>(0)
   const $userStore = useUserStore()
-
-  // watch(
-  //   () => tickets.value.length,
-  //   () => {
-  //     totalPrice.value = 0
-  //     tickets.value.forEach((t) => (totalPrice.value += t.price))
-  //   },
-  // )
+  const $eventStore = useEventStore()
 
   const init = async () => {
     if (!socket.connected) socket.connect()
     if ($userStore.currentUser!.role == ERole.CLIENT) {
-      await getMyTickets()
       await getMyPayments()
+    } else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
+      await Promise.all(
+        $eventStore.all.map(async (event) => {
+          const tiks = await getTikectsForEvent(event._id!)
+          if (tiks.length > 0) tickets.value = tickets.value.concat(tiks)
+        }),
+      )
+      // chaque ticket => getPayment => calcul total gain
     }
   }
 
@@ -52,7 +53,7 @@ export const useTicketStore = defineStore('ticket', () => {
   }
 
   const getTikectsForEvent = async (eventId: string) => {
-    const response = await secureAPI.post('/ticket/event', { eventId: eventId })
+    const response = await secureAPI.get(`/ticket/event/${eventId}`)
     return response.data as ITicket[]
   }
 
