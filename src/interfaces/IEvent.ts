@@ -1,3 +1,4 @@
+import type { EventStatus } from '@/enums/EStatus'
 import type { IUser } from './IUser'
 
 export interface IEvent {
@@ -15,8 +16,8 @@ export interface IEvent {
   ticketsAvailable?: number
   ownerId: string | IUser
   ticketAvailable?: number
-  canceled?: boolean
-  status?: 'UPCOMING' | 'ONGOING' | 'CANCELED' | 'ENDED'
+  cancelled?: boolean
+  status?: EventStatus
   createdAt?: Date
   updatedAt?: Date
 }

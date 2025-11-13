@@ -6,6 +6,7 @@ export interface IPayment {
   ticketId: string | ITicket
   userId: string | IUser
   amount: number
+  refundedAmount?: number
   method: string
   phoneNumber: string
   qrCodeUrl?: string
