@@ -24,22 +24,21 @@ export const useNotificationStore = defineStore('notification', () => {
     await getMyNotifications()
     if (!socket.connected) socket.connect()
 
-    socket.on('newNotification', (notification: INotification) => {
+    socket.on('notification-created', (notification: INotification) => {
       notifications.value.unshift(notification)
       unread.value++
     })
 
-    socket.on('newEvent', (event: IEvent) => {
+    socket.on('event-created', (event: IEvent) => {
       $eventStore.all.push(event)
-      $eventStore.repartition(event)
     })
 
-    socket.on('ticketPaid', (payment: IPayment) => {
+    socket.on('ticket-paid', (payment: IPayment) => {
       if ($userStore.currentUser?.role == ERole.ORGANIZER) {
         Notify.create({
           message: 'Nouveau participant',
           position: 'top-right',
-          icon: 'information',
+          icon: 'payments',
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
@@ -50,7 +49,7 @@ export const useNotificationStore = defineStore('notification', () => {
         Notify.create({
           message: 'Achat de billet effectué',
           position: 'top-right',
-          icon: 'checked',
+          icon: 'payments',
           iconColor: 'green',
           classes: 'bg-white text-black',
         })
@@ -61,6 +60,35 @@ export const useNotificationStore = defineStore('notification', () => {
         (ev) => ev._id == ((payment.ticketId as ITicket).eventId as IEvent)._id,
       )
       $eventStore.all[index] = (payment.ticketId as ITicket).eventId as IEvent
+    })
+
+    socket.on('event-cancelled', (event: IEvent) => {
+      const events = $eventStore.all
+      $eventStore.all = []
+      $eventStore.all = events.filter((e) => e._id !== event._id)
+
+      if ($userStore.currentUser?.role == ERole.ORGANIZER) {
+        Notify.create({
+          message: 'Événement annulé',
+          position: 'top-right',
+          icon: 'event',
+          iconColor: 'red',
+          classes: 'bg-white text-black',
+        })
+        $eventStore.all.push(event)
+      }
+    })
+
+    socket.on('payment-refunded', (payment: IPayment) => {
+      const payments = $ticketStore.payments
+      $ticketStore.payments = []
+      $ticketStore.payments = [...payments.filter((p) => p._id !== payment._id), payment]
+    })
+
+    socket.on('event-updated', (event: IEvent) => {
+      const events = $eventStore.all
+      $eventStore.all = []
+      $eventStore.all = [...events.filter((e) => e._id !== event._id), event]
     })
 
     socket.on('connect_error', () => {

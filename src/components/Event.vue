@@ -12,7 +12,7 @@
                     ? 'grey'
                     : eventStatus == 'ONGOING'
                       ? 'green'
-                      : eventStatus == 'CANCELED'
+                      : eventStatus == 'CANCELLED'
                         ? 'red'
                         : 'black'
                 "
@@ -23,13 +23,13 @@
                     ? 'À venir'
                     : eventStatus == 'ONGOING'
                       ? 'Encours'
-                      : eventStatus == 'CANCELED'
+                      : eventStatus == 'CANCELLED'
                         ? 'Annulé'
                         : 'Terminé'
                 }}</q-chip
               >
               <q-chip
-                v-if="props.event.capacity && props.event.ticketAvailable! <= 10"
+                v-if="props.event.capacity && props.event.ticketAvailable! <= 20"
                 dense
                 color="red"
                 text-color="white"
@@ -50,7 +50,7 @@
           <q-icon name="payments" color="green" />{{
             props.event.price <= 0
               ? 'gratuit'
-              : addSeparatorNumber(props.event.price, 3, '.') + ' Ar'
+              : addSeparatorNumber(props.event.price, 3, ' ') + ' Ar'
           }}
         </q-item-label>
         <q-item-label caption>
@@ -121,7 +121,7 @@
         />
         <q-btn
           v-if="
-            !props.event.canceled &&
+            !props.event.cancelled &&
             $userStore.currentUser?.role == ERole.ORGANIZER &&
             props.event.status != 'ENDED'
           "
@@ -213,32 +213,27 @@ import type { IUser } from '@/interfaces/IUser'
 import { useTicketStore } from '@/stores/Ticket.store'
 import type { ITicket } from '@/interfaces/ITicket'
 import { useEventStore } from '@/stores/Event.store'
+import type { EventStatus } from '@/enums/EStatus'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 dayjs.locale('fr')
 
 const props = defineProps<{ event: IEvent }>()
-const userRole = ref<string>()
 const $userStore = useUserStore()
 const $eventStore = useEventStore()
 
-const eventStatus = ref<'UPCOMING' | 'ONGOING' | 'CANCELED' | 'ENDED'>(props.event.status!)
+const eventStatus = ref<EventStatus>(props.event.status!)
 const eventOwner = ref<IUser | null>(null)
 const $ticketStore = useTicketStore()
 const ticketsForThis = ref<ITicket[]>([])
 const showCancelConfirmation = ref<boolean>(false)
 const cancelLoading = ref<boolean>(false)
-
-watch(
-  () => $userStore.currentUser,
-  () => (userRole.value = $userStore.currentUser!.role),
-)
 const showPurchaseForm = ref<boolean>(false)
 const expandedDetails = ref(false)
 const expandedParticipants = ref(false)
 
-const photo = ref<string>(`${import.meta.env.VITE_API_URL}/${props.event.photo}`)
+const photo = computed<string>(() => `${import.meta.env.VITE_API_URL}/${props.event.photo}`)
 const location = props.event.location.split(',')
 const province = ref<string>(location[0]!)
 
@@ -267,8 +262,7 @@ const showParticipants = () => {
 
 const cancelEvent = async () => {
   cancelLoading.value = true
-  const eventCanceled = await $eventStore.cancelEvent(props.event._id!)
-  console.log(eventCanceled)
+  await $eventStore.cancelEvent(props.event._id!)
   cancelLoading.value = false
   showCancelConfirmation.value = false
 }

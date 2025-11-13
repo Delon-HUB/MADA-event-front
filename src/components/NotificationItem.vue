@@ -18,7 +18,7 @@
 
     <q-item-section>
       <q-item-label lines="1">{{ data.title }}</q-item-label>
-      <q-item-label caption lines="3">
+      <q-item-label caption lines="5">
         {{ data.content }}
       </q-item-label>
     </q-item-section>
