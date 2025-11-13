@@ -20,7 +20,7 @@
             {{
               event?.price == 0
                 ? 'gratuit'
-                : 'montant : ' + addSeparatorNumber(payment.amount, 3, '.') + 'Ar'
+                : 'montant : ' + addSeparatorNumber(payment.amount, 3, ' ') + 'Ar'
             }}
           </q-item-label>
           <q-item-label>
@@ -36,7 +36,24 @@
 
     <q-separator />
     <q-card-actions>
-      <q-btn icon="download" flat dense no-caps label="PDF" color="green" @click="generatePDF" />
+      <q-btn
+        v-if="props.payment.status != PaymentStatus.REFUNDED"
+        icon="download"
+        flat
+        dense
+        no-caps
+        label="PDF"
+        color="green"
+        @click="generatePDF"
+      />
+      <q-chip
+        dense
+        color="red"
+        text-color="white"
+        icon="payments"
+        v-if="props.payment.status == PaymentStatus.REFUNDED"
+        >{{ addSeparatorNumber(props.payment.refundedAmount!, 3, ' ') }} Ar remboursé</q-chip
+      >
       <q-space />
       <q-btn
         flat
@@ -61,6 +78,7 @@ import { addSeparatorNumber } from '@/utils/utils'
 import type { IPayment } from '@/interfaces/IPayment'
 import { useEventStore } from '@/stores/Event.store'
 import type { ITicket } from '@/interfaces/ITicket'
+import { PaymentStatus } from '@/enums/EStatus'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)

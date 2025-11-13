@@ -24,14 +24,24 @@
 
     <q-list>
       <div v-if="searching">
-        <Event :event="event" v-for="event in searchResult" class="q-ma-xs" />
+        <Event
+          :event="event"
+          v-for="event in searchResult"
+          :key="event._id?.concat(event.status!)"
+          class="q-ma-xs"
+        />
         <p v-if="searchResult.length == 0" class="text-center text-overline">
           Aucun événement correspondant...
         </p>
       </div>
 
       <div v-else>
-        <Event :event="event" v-for="event in events" class="q-ma-xs" />
+        <Event
+          :event="event"
+          v-for="event in events"
+          :key="event._id?.concat(event.status!)"
+          class="q-ma-xs"
+        />
         <p v-if="events.length == 0" class="text-center text-overline">
           Aucun événement disponible pour l'instant...
         </p>
