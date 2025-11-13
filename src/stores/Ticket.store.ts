@@ -7,14 +7,28 @@ import { useUserStore } from './User.store'
 import { ERole } from '@/enums/ERole'
 import socket from '@/instances/socket'
 import { useEventStore } from './Event.store'
+import { PaymentStatus } from '@/enums/EStatus'
 
 export const useTicketStore = defineStore('ticket', () => {
   let tickets = ref<ITicket[]>([])
   let payments = ref<IPayment[]>([])
 
+  let paymentRefunded = computed<IPayment[]>(() =>
+    payments.value.filter((p) => p.status == PaymentStatus.REFUNDED),
+  )
+  let paymentNotRefunded = computed<IPayment[]>(() =>
+    payments.value.filter((p) => p.status == PaymentStatus.PAID),
+  )
+
+  let totalRefundedAmount = computed<number>(() => {
+    let total = 0
+    paymentRefunded.value.forEach((p) => (total += p.refundedAmount!))
+    return total
+  })
+
   let gain = computed<number>(() => {
     let total = 0
-    payments.value.forEach((p) => (total += p.amount))
+    paymentNotRefunded.value.forEach((p) => (total += p.amount))
     return total
   })
 
@@ -29,8 +43,8 @@ export const useTicketStore = defineStore('ticket', () => {
     } else if ($userStore.currentUser!.role == ERole.ORGANIZER) {
       await Promise.all(
         $eventStore.all.map(async (event) => {
-          const tiks = await getTikectsForEvent(event._id!)
-          if (tiks.length > 0) tickets.value = tickets.value.concat(tiks)
+          const ticks = await getTikectsForEvent(event._id!)
+          if (ticks.length > 0) tickets.value = tickets.value.concat(ticks)
         }),
       )
 
@@ -79,8 +93,11 @@ export const useTicketStore = defineStore('ticket', () => {
     getMyTickets,
     getTikectsForEvent,
     createTicket,
+    paymentNotRefunded,
+    paymentRefunded,
     payments,
     tickets,
     gain,
+    totalRefundedAmount,
   }
 })
