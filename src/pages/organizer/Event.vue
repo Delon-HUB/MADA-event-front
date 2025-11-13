@@ -18,7 +18,8 @@
         <q-tab name="tab1" label="Tous" />
         <q-tab name="tab2" label="À venir" />
         <q-tab name="tab3" label="En cours" />
-        <q-tab name="tab4" label="Terminé" />
+        <q-tab name="tab4" label="Annulé" />
+        <q-tab name="tab5" label="Terminé" />
       </q-tabs>
     </q-header>
     <q-tab-panels v-model="tab" animated class="page">
@@ -41,6 +42,12 @@
         <Event v-for="event in $eventStore.ongoing" :event="event" class="q-mb-xs" />
       </q-tab-panel>
       <q-tab-panel name="tab4">
+        <p v-if="!$eventStore.canceled.length" class="text-center text-overline">
+          Aucun événement...
+        </p>
+        <Event v-for="event in $eventStore.canceled" :event="event" class="q-mb-xs" />
+      </q-tab-panel>
+      <q-tab-panel name="tab5">
         <p v-if="!$eventStore.terminated.length" class="text-center text-overline">
           Aucun événement...
         </p>

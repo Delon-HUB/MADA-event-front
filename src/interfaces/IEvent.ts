@@ -15,7 +15,8 @@ export interface IEvent {
   ticketsAvailable?: number
   ownerId: string | IUser
   ticketAvailable?: number
-  status?: 'UPCOMING' | 'ONGOING' | 'ENDED'
+  canceled?: boolean
+  status?: 'UPCOMING' | 'ONGOING' | 'CANCELED' | 'ENDED'
   createdAt?: Date
   updatedAt?: Date
 }

@@ -240,7 +240,8 @@ const newEvent = reactive<IEvent>({
   startDate: new Date(),
   endDate: new Date(),
   price: 0,
-  participants: [],
+  capacity: 0,
+  ownerId: '',
 })
 const startDateString = ref<string>()
 const startTimeString = ref<string>()

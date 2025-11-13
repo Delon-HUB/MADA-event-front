@@ -4,14 +4,42 @@
       <q-item-section class="text-bold">
         <q-item-label>
           <p class="text-bold">
-            {{ event.title }} <br /><span
-              class="text-red text-caption"
-              v-if="props.event.capacity && props.event.ticketAvailable! <= 10"
-              >{{
-                props.event.ticketAvailable! > 0
-                  ? `${props.event.ticketAvailable} billets restant `
-                  : 'Place complet'
-              }}
+            <span class="q-ml-sm">{{ event.title.toUpperCase() }}</span> <br /><span>
+              <q-chip
+                dense
+                :color="
+                  eventStatus == 'UPCOMING'
+                    ? 'grey'
+                    : eventStatus == 'ONGOING'
+                      ? 'green'
+                      : eventStatus == 'CANCELED'
+                        ? 'red'
+                        : 'black'
+                "
+                text-color="white"
+                icon="event"
+                >{{
+                  eventStatus == 'UPCOMING'
+                    ? 'À venir'
+                    : eventStatus == 'ONGOING'
+                      ? 'Encours'
+                      : eventStatus == 'CANCELED'
+                        ? 'Annulé'
+                        : 'Terminé'
+                }}</q-chip
+              >
+              <q-chip
+                v-if="props.event.capacity && props.event.ticketAvailable! <= 10"
+                dense
+                color="red"
+                text-color="white"
+                icon="event"
+                >{{
+                  props.event.ticketAvailable! > 0
+                    ? `${props.event.ticketAvailable} billets restant `
+                    : 'Place complet'
+                }}</q-chip
+              >
             </span>
           </p>
         </q-item-label>
@@ -77,19 +105,33 @@
         />
       </div>
       <q-space />
-      <q-btn
-        flat
-        dense
-        no-caps
-        label="détails"
-        :icon="expandedDetails ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-        @click="
-          () => {
-            expandedDetails = !expandedDetails
-            expandedParticipants = false
-          }
-        "
-      />
+      <div>
+        <q-btn
+          flat
+          dense
+          no-caps
+          label="détails"
+          :icon="expandedDetails ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          @click="
+            () => {
+              expandedDetails = !expandedDetails
+              expandedParticipants = false
+            }
+          "
+        />
+        <q-btn
+          v-if="
+            !props.event.canceled &&
+            $userStore.currentUser?.role == ERole.ORGANIZER &&
+            props.event.status != 'ENDED'
+          "
+          outline
+          no-caps
+          label="Annuler"
+          :loading="cancelLoading"
+          @click="() => (showCancelConfirmation = true)"
+        />
+      </div>
     </q-card-actions>
 
     <q-slide-transition>
@@ -140,6 +182,20 @@
     </q-slide-transition>
 
     <purchase :event="props.event" v-model="showPurchaseForm" />
+
+    <q-dialog v-model="showCancelConfirmation" persistent>
+      <q-card>
+        <q-card-section>
+          <q-icon name="event_busy" color="red" />
+          Voulez-vous vraiment annuler cette événement ?
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn outline no-caps label="Non" color="grey" v-close-popup />
+          <q-btn outline no-caps label="Oui" color="red" @click="cancelEvent" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 <script setup lang="ts">
@@ -156,6 +212,7 @@ import { addSeparatorNumber } from '@/utils/utils'
 import type { IUser } from '@/interfaces/IUser'
 import { useTicketStore } from '@/stores/Ticket.store'
 import type { ITicket } from '@/interfaces/ITicket'
+import { useEventStore } from '@/stores/Event.store'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
@@ -164,9 +221,14 @@ dayjs.locale('fr')
 const props = defineProps<{ event: IEvent }>()
 const userRole = ref<string>()
 const $userStore = useUserStore()
+const $eventStore = useEventStore()
+
+const eventStatus = ref<'UPCOMING' | 'ONGOING' | 'CANCELED' | 'ENDED'>(props.event.status!)
 const eventOwner = ref<IUser | null>(null)
 const $ticketStore = useTicketStore()
 const ticketsForThis = ref<ITicket[]>([])
+const showCancelConfirmation = ref<boolean>(false)
+const cancelLoading = ref<boolean>(false)
 
 watch(
   () => $userStore.currentUser,
@@ -201,6 +263,14 @@ const showParticipants = () => {
     )
     ticketsForThis.value = tickets
   }
+}
+
+const cancelEvent = async () => {
+  cancelLoading.value = true
+  const eventCanceled = await $eventStore.cancelEvent(props.event._id!)
+  console.log(eventCanceled)
+  cancelLoading.value = false
+  showCancelConfirmation.value = false
 }
 
 // const getImgAsBase64 = async () => {

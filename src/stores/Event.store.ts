@@ -15,6 +15,7 @@ export const useEventStore = defineStore('event', () => {
   let all = ref<IEvent[]>([])
   let upcoming = ref<IEvent[]>([])
   let ongoing = ref<IEvent[]>([])
+  let canceled = ref<IEvent[]>([])
   let terminated = ref<IEvent[]>([])
 
   const init = async () => {
@@ -38,6 +39,7 @@ export const useEventStore = defineStore('event', () => {
   const repartition = (event: IEvent) => {
     if (event.status == 'UPCOMING') upcoming.value.push(event)
     else if (event.status == 'ONGOING') ongoing.value.push(event)
+    else if (event.status == 'CANCELED') canceled.value.push(event)
     else terminated.value.push(event)
   }
 
@@ -47,15 +49,23 @@ export const useEventStore = defineStore('event', () => {
     return event
   }
 
+  const cancelEvent = async (eventId: string) => {
+    const response = await secureAPI.patch(`/event/${eventId}`)
+    const event = response.data
+    return event
+  }
+
   return {
     init,
     getMyEvents,
     getEvents,
     findById,
     repartition,
+    cancelEvent,
     all,
     ongoing,
     upcoming,
+    canceled,
     terminated,
   }
 })
