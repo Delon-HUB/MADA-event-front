@@ -7,9 +7,9 @@
           <q-item-label class="text-h6">
             {{ event?.title }}
           </q-item-label>
-          <q-item-label class="text-bold">
+          <q-item-label class="text-bold" v-if="event?.startDate">
             <q-icon size="24px" name="calendar_month" />
-            {{ new Date(props.payment.createdAt!).toLocaleDateString() }}
+            {{ new Date(event.startDate!).toLocaleDateString() }}
           </q-item-label>
           <q-item-label>
             <q-icon size="24px" name="place" color="red" /> {{ event?.location?.split(',')[0] }}
@@ -115,6 +115,7 @@ dayjs.extend(isBetween)
 dayjs.locale('fr')
 
 const props = defineProps<{ payment: IPayment }>()
+const qrCode = ref<string>(`${import.meta.env.VITE_API_URL}/${props.payment.qrCodeUrl}`)
 const showRefundConfirmation = ref<boolean>(false)
 const allowedAmount = ref<number>(0)
 const expanded = ref(false)
@@ -141,7 +142,6 @@ onBeforeMount(async () => {
     event.value = await $eventStore.findById(eventId!)
   } else if (typeof ticket.value.eventId == 'object') event.value = ticket.value.eventId as IEvent
 })
-const qrCode = ref<string>(`${import.meta.env.VITE_API_URL}/${props.payment.qrCodeUrl}`)
 
 const getRefundAllowedAmount = async () => {
   const res = await $ticketStore.getRefundAmount(props.payment._id!)
@@ -156,14 +156,12 @@ const requestRefund = async () => {
 
 const getDayBeforeEventStarted = (startDate: Date) => {
   const oneDay = 1000 * 60 * 60 * 24
-  const diffDays = Math.ceil((startDate.getTime() - new Date().getTime()) / oneDay)
+  const diffDays = Math.ceil((new Date(startDate).getTime() - new Date().getTime()) / oneDay)
   return diffDays
 }
 
 const dayBeforeStart = computed<number>(() =>
-  (ticket.value.eventId as IEvent).startDate
-    ? getDayBeforeEventStarted((ticket.value.eventId as IEvent).startDate)
-    : 0,
+  event.value?.startDate ? getDayBeforeEventStarted(event.value.startDate) : 0,
 )
 
 const generatePDF = async () => {

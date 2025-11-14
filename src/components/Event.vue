@@ -1,6 +1,6 @@
 <template>
   <q-card flat bordered>
-    <q-item class="q-pa-none">
+    <q-item class="q-pa-none q-pt-xs">
       <q-item-section class="text-bold">
         <q-item-label>
           <p class="text-bold">
