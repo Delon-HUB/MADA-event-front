@@ -1,3 +1,4 @@
+import './assets/main.css'
 import 'quasar/dist/quasar.css'
 import '@quasar/extras/material-icons/material-icons.css'
 

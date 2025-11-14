@@ -1,16 +1,26 @@
 import type { EError } from '@/enums/EError'
 import router from '@/router'
-import { errorForFrenchUser } from '@/utils/errorForHumain'
+import { translateError } from '@/utils/errorForHumain'
 import axios, { AxiosError } from 'axios'
 import { Notify } from 'quasar'
 
+const token = localStorage.getItem('token') || ''
 let secureAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+    Authorization: `Bearer ${token}`,
   },
+})
+
+secureAPI.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    config.headers['Content-Type'] = 'multipart/form-data'
+  } else {
+    config.headers['Content-Type'] = 'application/json'
+  }
+  return config
 })
 
 const publicAPI = axios.create({
@@ -24,7 +34,7 @@ const publicAPI = axios.create({
 publicAPI.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const message = errorForFrenchUser(
+    const message = translateError(
       (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
     )
     Notify.create({
@@ -42,7 +52,7 @@ publicAPI.interceptors.response.use(
 secureAPI.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const message = errorForFrenchUser(
+    const message = translateError(
       (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
     )
     if (error.status == 401) router.push('/auth/login')

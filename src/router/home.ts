@@ -9,6 +9,15 @@ export const HOME_ROUTER = [
         name: 'home',
         component: () => import('@/pages/client/Home.vue'),
       },
+      {
+        path: 'tickets',
+        name: 'tickets',
+        component: () => import('@/pages/client/Ticket.vue'),
+      },
+      {
+        path: 'notifications',
+        component: () => import('@/pages/Notification.vue'),
+      },
     ],
   },
   {
@@ -25,6 +34,10 @@ export const HOME_ROUTER = [
         path: 'event',
         name: 'event',
         component: () => import('@/pages/organizer/Event.vue'),
+      },
+      {
+        path: 'notifications',
+        component: () => import('@/pages/Notification.vue'),
       },
     ],
   },

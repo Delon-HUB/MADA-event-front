@@ -1,9 +1,13 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'com.madaEvent.app',
   appName: 'mada-event-front',
-  webDir: 'dist'
-};
+  webDir: 'dist',
+  server: {
+    cleartext: true,
+    androidScheme: 'http',
+  },
+}
 
-export default config;
+export default config

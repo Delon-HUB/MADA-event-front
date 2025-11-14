@@ -1,10 +1,10 @@
 import { secureAPI } from '@/instances/axios'
 import type { IUser } from '@/interfaces/IUser'
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-  let currentUser = reactive<Partial<IUser>>({})
+  let currentUser = ref<Partial<IUser>>()
 
   const init = async () => {
     const user = (await getMyInformation()).data as Partial<IUser>
@@ -17,13 +17,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const setCurrentUser = (_user: Partial<IUser>) => {
-    currentUser = _user
-    console.log(currentUser)
+    currentUser.value = _user
   }
 
-  const getCurrentUser = () => {
-    return currentUser
+  const findUserById = async (id: string): Promise<IUser | null> => {
+    const response = await secureAPI.post(`/user/userId`, { userId: id })
+    return response.data as Promise<IUser | null>
   }
 
-  return { getMyInformation, getCurrentUser, init, setCurrentUser }
+  return { getMyInformation, currentUser, init, setCurrentUser, findUserById }
 })

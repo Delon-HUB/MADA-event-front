@@ -9,6 +9,7 @@ export interface IUser {
   otp?: string
   otpExpiry?: Date
   role: ERole
+  photo?: string
   createdAt: Date
   updatedAt: Date
 }
