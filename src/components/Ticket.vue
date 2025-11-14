@@ -37,14 +37,24 @@
     <q-separator />
     <q-card-actions>
       <q-btn
-        v-if="props.payment.status != PaymentStatus.REFUNDED"
+        v-if="props.payment.status == PaymentStatus.PAID"
         icon="download"
-        flat
+        outline
         dense
         no-caps
         label="PDF"
         color="green"
         @click="generatePDF"
+      />
+      <q-btn
+        v-if="props.payment.status == PaymentStatus.PAID && dayBeforeStart >= 2"
+        icon="account_balance_wallet"
+        outline
+        dense
+        no-caps
+        label="Rembourser"
+        color="red"
+        @click="getRefundAllowedAmount"
       />
       <q-chip
         dense
@@ -59,11 +69,30 @@
         flat
         dense
         no-caps
-        label="détails de l'événement"
+        label="détails"
         :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
         @click="expanded = !expanded"
       />
     </q-card-actions>
+
+    <q-dialog v-model="showRefundConfirmation" persistent>
+      <q-card>
+        <q-card-section class="text-center">
+          <q-icon name="payments" color="green" /><span class="text-bold"
+            >Demmande de remboursement</span
+          >
+          <br />
+          La somme remboursable est de
+          <strong>{{ addSeparatorNumber(allowedAmount, 3, ' ') }} Ar</strong><br />
+          Voulez-vous continuer ?
+        </q-card-section>
+
+        <q-card-actions align="center">
+          <q-btn outline no-caps label="Non" color="grey" v-close-popup />
+          <q-btn outline no-caps label="Oui" color="red" @click="requestRefund" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 <script setup lang="ts">
@@ -79,14 +108,19 @@ import type { IPayment } from '@/interfaces/IPayment'
 import { useEventStore } from '@/stores/Event.store'
 import type { ITicket } from '@/interfaces/ITicket'
 import { PaymentStatus } from '@/enums/EStatus'
+import { useTicketStore } from '@/stores/Ticket.store'
 
 dayjs.extend(relativeTime)
 dayjs.extend(isBetween)
 dayjs.locale('fr')
 
-const expanded = ref(false)
 const props = defineProps<{ payment: IPayment }>()
+const showRefundConfirmation = ref<boolean>(false)
+const allowedAmount = ref<number>(0)
+const expanded = ref(false)
 const $eventStore = useEventStore()
+const $ticketStore = useTicketStore()
+
 const event = ref<IEvent>()
 const ticket = ref<ITicket>(props.payment.ticketId as ITicket)
 const paymentMethodeLogo = computed(() => {
@@ -108,6 +142,29 @@ onBeforeMount(async () => {
   } else if (typeof ticket.value.eventId == 'object') event.value = ticket.value.eventId as IEvent
 })
 const qrCode = ref<string>(`${import.meta.env.VITE_API_URL}/${props.payment.qrCodeUrl}`)
+
+const getRefundAllowedAmount = async () => {
+  const res = await $ticketStore.getRefundAmount(props.payment._id!)
+  allowedAmount.value = res.allowedAmount
+  if (res.allowedAmount) showRefundConfirmation.value = true
+}
+
+const requestRefund = async () => {
+  const response = await $ticketStore.acceptRefund(props.payment._id!)
+  showRefundConfirmation.value = false
+}
+
+const getDayBeforeEventStarted = (startDate: Date) => {
+  const oneDay = 1000 * 60 * 60 * 24
+  const diffDays = Math.ceil((startDate.getTime() - new Date().getTime()) / oneDay)
+  return diffDays
+}
+
+const dayBeforeStart = computed<number>(() =>
+  (ticket.value.eventId as IEvent).startDate
+    ? getDayBeforeEventStarted((ticket.value.eventId as IEvent).startDate)
+    : 0,
+)
 
 const generatePDF = async () => {
   if (event.value?._id) {

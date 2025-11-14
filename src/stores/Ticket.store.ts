@@ -73,6 +73,15 @@ export const useTicketStore = defineStore('ticket', () => {
     return response.data as IPayment[]
   }
 
+  const getRefundAmount = async (paymentId: string) => {
+    const response = await secureAPI.get(`/payment/refund/${paymentId}`)
+    return response.data as { paymentId: string; allowedAmount: number }
+  }
+
+  const acceptRefund = async (paymentId: string) => {
+    const response = await secureAPI.post(`/payment/refund/accept`, { paymentId: paymentId })
+    return response.data as IPayment
+  }
   const createTicket = async (ticket: Partial<ITicket>, paymentMethode: string, phone: string) => {
     const ticketCreated = (await secureAPI.post('/ticket', ticket)).data as ITicket
     const paymentData: Partial<IPayment> = {
@@ -93,6 +102,8 @@ export const useTicketStore = defineStore('ticket', () => {
     getMyTickets,
     getTikectsForEvent,
     createTicket,
+    getRefundAmount,
+    acceptRefund,
     paymentNotRefunded,
     paymentRefunded,
     payments,
