@@ -9,16 +9,24 @@
     <q-footer bordered class="footer">
       <q-toolbar>
         <q-space></q-space>
-        <div class="toolbar" v-if="$userStore.currentUser?.role == ERole.CLIENT">
-          <q-btn flat no-caps dense icon="home" stack label="Découvrir" :to="'/client/home'" />
+        <div class="toolbar">
           <q-btn
             flat
             no-caps
             dense
-            icon="receipt"
+            :icon="userRole == ERole.CLIENT ? 'home' : 'timeline'"
             stack
-            label="Mes billets"
-            :to="'/client/tickets'"
+            :label="userRole == ERole.CLIENT ? 'Découvrir' : 'Statistique'"
+            :to="userRole == ERole.CLIENT ? '/client/home' : '/organizer/dashboard'"
+          />
+          <q-btn
+            flat
+            no-caps
+            dense
+            :icon="userRole == ERole.CLIENT ? 'receipt' : 'event'"
+            stack
+            :label="userRole == ERole.CLIENT ? 'Mes billets' : 'Mes événements'"
+            :to="userRole == ERole.CLIENT ? '/client/tickets' : '/organizer/event'"
           />
 
           <q-btn
@@ -28,13 +36,18 @@
             icon="notifications"
             stack
             label="Notification"
-            :to="'/client/notifications'"
+            :to="userRole == ERole.CLIENT ? '/client/notifications' : '/organizer/notifications'"
             ><q-badge v-if="$notificationStore.unread" color="red" floating rounded transparent>{{
               $notificationStore.unread <= 9 ? $notificationStore.unread : '9+'
             }}</q-badge></q-btn
           >
-          <q-btn-dropdown flat no-caps dense stack>
-            <template v-slot:label> <q-icon name="menu" /> Menu</template>
+          <q-btn-dropdown flat no-caps dense stack dropdown-icon="none" class="no-dropdown-icon">
+            <template v-slot:label>
+              <div class="column items-center">
+                <q-icon name="menu" size="sm" />
+                <div class="text-caption">Menu</div>
+              </div>
+            </template>
             <q-list>
               <q-item clickable v-close-popup>
                 <q-item-section avatar>
@@ -46,62 +59,7 @@
               </q-item>
 
               <q-separator inset />
-              <q-item clickable v-close-popup @click="() => useAuthStore().logout()">
-                <q-item-section avatar>
-                  <q-avatar icon="logout" color="#14452f"></q-avatar>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Se déconnecter</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
-        <div class="toolbar" v-if="$userStore.currentUser?.role == ERole.ORGANIZER">
-          <q-btn
-            flat
-            no-caps
-            dense
-            icon="timeline"
-            stack
-            label="Statistique"
-            :to="'/organizer/dashboard'"
-          />
-          <q-btn
-            flat
-            no-caps
-            dense
-            icon="event"
-            stack
-            label="Mes événement"
-            :to="'/organizer/event'"
-          />
-          <q-btn
-            flat
-            no-caps
-            dense
-            icon="notifications"
-            stack
-            label="Notification"
-            :to="'/organizer/notifications'"
-            ><q-badge v-if="$notificationStore.unread" color="red" floating rounded transparent>{{
-              $notificationStore.unread <= 9 ? $notificationStore.unread : '9+'
-            }}</q-badge></q-btn
-          >
 
-          <q-btn-dropdown flat no-caps dense stack>
-            <template v-slot:label> <q-icon name="menu" /> Menu</template>
-            <q-list>
-              <q-item clickable v-close-popup>
-                <q-item-section avatar>
-                  <q-avatar icon="person" color="#14452f"></q-avatar>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Gérer mon compte</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-separator inset />
               <q-item clickable v-close-popup @click="() => useAuthStore().logout()">
                 <q-item-section avatar>
                   <q-avatar icon="logout" color="#14452f"></q-avatar>
@@ -126,12 +84,14 @@ import { useEventStore } from '@/stores/Event.store'
 import { useNotificationStore } from '@/stores/Notification.store'
 import { useTicketStore } from '@/stores/Ticket.store'
 import { useUserStore } from '@/stores/User.store'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const $userStore = useUserStore()
 const $eventStore = useEventStore()
 const $ticketStore = useTicketStore()
 const $notificationStore = useNotificationStore()
+
+const userRole = computed(() => $userStore.currentUser?.role)
 
 onMounted(async () => {
   await $userStore.init()
@@ -161,7 +121,6 @@ onMounted(async () => {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  padding-top: 1em;
 }
 
 .icon-color {
@@ -179,5 +138,11 @@ onMounted(async () => {
   background-color: #14452f;
   position: fixed;
   bottom: 0%;
+}
+
+.no-dropdown-icon :deep(.q-icon.q-btn-dropdown__arrow) {
+  display: none !important;
+  margin: 0 !important;
+  width: 0 !important;
 }
 </style>
