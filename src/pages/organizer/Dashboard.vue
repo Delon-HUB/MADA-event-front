@@ -87,7 +87,7 @@
       </div>
     </q-card>
     <q-card flat class="q-mt-md">
-      <q-item clickable v-ripple>
+      <q-item v-ripple>
         <q-item-section avatar>
           <q-icon color="light-green" name="receipt" />
         </q-item-section>
@@ -97,9 +97,9 @@
           <q-item-label>{{ $ticketStore.paymentNotRefunded.length }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable v-ripple>
+      <q-item v-ripple>
         <q-item-section avatar>
-          <q-icon color="light-green" name="payments" />
+          <q-icon color="light-green" name="savings" />
         </q-item-section>
 
         <q-item-section>Gains</q-item-section>
@@ -107,7 +107,7 @@
           <q-item-label>{{ gain }} ar</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable v-ripple>
+      <q-item v-ripple>
         <q-item-section avatar>
           <q-icon color="grey" name="receipt" />
         </q-item-section>
@@ -117,9 +117,9 @@
           <q-item-label>{{ $ticketStore.paymentRefunded.length }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable v-ripple>
+      <q-item v-ripple>
         <q-item-section avatar>
-          <q-icon color="grey" name="payments" />
+          <q-icon color="grey" name="money_off" />
         </q-item-section>
 
         <q-item-section>Total remboursé</q-item-section>
