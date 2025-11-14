@@ -28,8 +28,8 @@ export const useTicketStore = defineStore('ticket', () => {
 
   let gain = computed<number>(() => {
     let total = 0
-    paymentNotRefunded.value.forEach((p) => (total += p.amount))
-    return total
+    payments.value.forEach((p) => (total += p.amount))
+    return total - totalRefundedAmount.value
   })
 
   const $userStore = useUserStore()
