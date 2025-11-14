@@ -1,6 +1,6 @@
 import type { EError } from '@/enums/EError'
 import router from '@/router'
-import { errorForFrenchUser } from '@/utils/errorForHumain'
+import { translateError } from '@/utils/errorForHumain'
 import axios, { AxiosError } from 'axios'
 import { Notify } from 'quasar'
 
@@ -34,7 +34,7 @@ const publicAPI = axios.create({
 publicAPI.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const message = errorForFrenchUser(
+    const message = translateError(
       (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
     )
     Notify.create({
@@ -52,7 +52,7 @@ publicAPI.interceptors.response.use(
 secureAPI.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const message = errorForFrenchUser(
+    const message = translateError(
       (error.response?.data as { statusCode: number; message: EError })?.message || error.code,
     )
     if (error.status == 401) router.push('/auth/login')
