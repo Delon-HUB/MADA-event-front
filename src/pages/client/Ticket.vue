@@ -7,6 +7,7 @@
       <Ticket
         v-for="(payment, index) in $ticketStore.payments"
         :payment="payment"
+        :key="payment._id?.concat(payment.status!)"
         class="q-ma-sm"
         :id="index"
       />
