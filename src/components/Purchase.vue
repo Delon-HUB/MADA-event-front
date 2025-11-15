@@ -214,7 +214,15 @@
 
         <q-card-actions align="right">
           <q-btn outline color="dark" no-caps label="Annuler" v-close-popup />
-          <q-btn outline color="green" no-caps label="Confirmer" @click="buy" :loading="loading" />
+          <q-btn
+            outline
+            color="green"
+            no-caps
+            label="Confirmer"
+            :disable="!canSend"
+            @click="buy"
+            :loading="loading"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -251,6 +259,13 @@ const totalPrice = computed(
     ticket.value.nbAdult! * props.event.price! +
     ticket.value.nbSenior! * props.event.price! * 0.8,
 )
+
+const canSend = computed(
+  () =>
+    tel.value.trim().length > 0 &&
+    (ticket.value.nbAdult! > 0 || ticket.value.nbChild! > 0 || ticket.value.nbSenior! > 0),
+)
+
 const buy = async () => {
   loading.value = true
   const response = await $ticketStore.createTicket(ticket.value, paymentMethode.value, tel.value)
