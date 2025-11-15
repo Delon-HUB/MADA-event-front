@@ -167,6 +167,7 @@
               @click="step < 3 ? step++ : step"
               color="positive"
               label="Continuer"
+              :disable="!canContinue"
               v-if="step < 3"
               icon-right="arrow_circle_right"
             />
@@ -192,7 +193,7 @@ import { ECategory } from '@/enums/ECategory'
 import { secureAPI } from '@/instances/axios'
 import type { ICreateDistrictDto } from '@/interfaces/IDistrict'
 import type { IEvent } from '@/interfaces/IEvent'
-import { onBeforeMount, reactive, ref } from 'vue'
+import { computed, onBeforeMount, reactive, ref } from 'vue'
 
 const model = defineModel<boolean>()
 const step = ref<number>(1)
@@ -243,14 +244,28 @@ const newEvent = reactive<IEvent>({
   capacity: 0,
   ownerId: '',
 })
-const startDateString = ref<string>()
-const startTimeString = ref<string>()
-const endDateString = ref<string>()
-const endTimeString = ref<string>()
+const startDateString = ref<string>('')
+const startTimeString = ref<string>('')
+const endDateString = ref<string>('')
+const endTimeString = ref<string>('')
 
 const file = ref<File>()
 
-// MÉTHODE
+const canContinue = computed(() => {
+  if (step.value == 1) {
+    return newEvent.title.trim().length > 0 && newEvent.category.length > 0
+  } else if (step.value == 2) {
+    return (
+      newEvent.location.length > 0 &&
+      newEvent.address.trim().length > 0 &&
+      startDateString.value!.trim().length &&
+      startTimeString.value!.trim().length > 0 &&
+      endDateString.value!.trim().length &&
+      endTimeString.value!.trim().length > 0
+    )
+  }
+})
+
 const createEvent = async () => {
   loading.value = true
   newEvent.startDate = formatDate(startDateString.value!, startTimeString.value!)

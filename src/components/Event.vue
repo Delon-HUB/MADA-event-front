@@ -353,8 +353,6 @@ const cancelEvent = async () => {
   showCancelConfirmation.value = false
 }
 
-console.log(props.event)
-
 // const getImgAsBase64 = async () => {
 //   const url = photo.value
 //   const response = await fetch(url, {
