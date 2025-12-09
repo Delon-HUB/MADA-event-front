@@ -31,13 +31,13 @@
 import type { INotification } from '@/interfaces/INotification'
 import { useUserStore } from '@/stores/User.store'
 import dayjs from 'dayjs'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 dayjs.locale('fr')
 const props = defineProps<{ data: INotification }>()
 const $userStore = useUserStore()
 const date = ref(dayjs(props.data.createdAt).fromNow())
 
-const profilePic = `${import.meta.env.VITE_API_URL}/public/profile/default.jpeg`
+const profilePic = computed(() => `${import.meta.env.VITE_API_URL}${$userStore.currentUser?.photo}`)
 setInterval(() => (date.value = dayjs(props.data.createdAt).fromNow()), 1000 * 60)
 </script>
