@@ -1,6 +1,7 @@
 import './assets/main.css'
 import 'quasar/dist/quasar.css'
 import '@quasar/extras/material-icons/material-icons.css'
+import 'quasar/src/css/index.sass'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

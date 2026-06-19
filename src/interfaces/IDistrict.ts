@@ -1,7 +1,9 @@
-import type { ICreateRegionDto } from './IRegion'
+import type { ICommune } from './ICommune'
+import type { IRegion } from './IRegion'
 
-export interface ICreateDistrictDto {
-  _id?: string
-  district: string
-  regionId: ICreateRegionDto
+export interface IDistrict {
+  _id: string
+  name: string
+  regionId: string | IRegion
+  communes: ICommune[]
 }
