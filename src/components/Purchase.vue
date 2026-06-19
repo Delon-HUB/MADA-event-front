@@ -3,7 +3,7 @@
     <q-dialog v-model="model" persistent transition-show="scale" transition-hide="scale">
       <q-card>
         <q-card-section>
-          <q-header class="positif-color">
+          <q-header>
             <q-toolbar>
               <q-btn class="text-bold" flat no-caps icon="payments">Achat de billet</q-btn>
               <q-space />
@@ -274,9 +274,3 @@ const buy = async () => {
   model.value = false
 }
 </script>
-
-<style scoped>
-.positif-color {
-  background-color: #14452f;
-}
-</style>

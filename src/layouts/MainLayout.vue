@@ -98,6 +98,7 @@ onMounted(async () => {
   await $eventStore.init()
   await $ticketStore.init()
   await $notificationStore.init()
+
   if (!$userStore.currentUser) router.push('/auth/login')
   switch ($userStore.currentUser?.role) {
     case ERole.CLIENT:
@@ -109,7 +110,7 @@ onMounted(async () => {
   }
 })
 </script>
-<style scoped>
+<style scoped lang="scss">
 @import url('https://fonts.cdnfonts.com/css/vtks-caveirada');
 .layout {
   height: 100vh;
@@ -124,7 +125,7 @@ onMounted(async () => {
 }
 
 .icon-color {
-  color: #14452f;
+  color: $primary;
 }
 
 .title {
@@ -135,7 +136,7 @@ onMounted(async () => {
 }
 
 .footer {
-  background-color: #14452f;
+  background-color: $positive;
   position: fixed;
   bottom: 0%;
 }
