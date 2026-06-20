@@ -17,7 +17,7 @@
             icon="tune"
             @click="() => (showFilter = !showFilter)"
           />
-          <Filter @finish="(options, ev) => search(options, ev)" v-model="showFilter" />
+          <Filter @finish="(options: any, ev: any) => search(options, ev)" v-model="showFilter" />
         </template>
       </q-input>
     </q-header>
