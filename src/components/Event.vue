@@ -268,22 +268,6 @@
   </q-card>
 </template>
 
-<style scoped>
-.event-card {
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -2px rgba(0, 0, 0, 0.06);
-}
-
-.rounded-borders {
-  border-radius: 8px;
-}
-
-.q-list li {
-  list-style: none;
-}
-</style>
-
 <script setup lang="ts">
 import type { IEvent } from '@/interfaces/IEvent'
 import Purchase from './Purchase.vue'
@@ -370,3 +354,21 @@ const cancelEvent = async () => {
 
 // getImgAsBase64()
 </script>
+
+<style scoped>
+.event-card {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  max-width: 400px;
+  min-width: 400px;
+}
+
+.rounded-borders {
+  border-radius: 8px;
+}
+
+.q-list li {
+  list-style: none;
+}
+</style>

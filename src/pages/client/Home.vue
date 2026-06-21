@@ -1,28 +1,6 @@
 <template>
-  <q-page>
-    <q-header bordered class="header bg-white q-pa-xs text-black">
-      <q-input
-        outlined
-        rounded
-        v-model="text"
-        color="green"
-        placeholder="Entrer un titre ou lieu de l'événement..."
-        clearable
-      >
-        <template v-slot:after
-          ><q-btn
-            label="Filtres"
-            flat
-            no-caps
-            icon="tune"
-            @click="() => (showFilter = !showFilter)"
-          />
-          <Filter @finish="(options: any, ev: any) => search(options, ev)" v-model="showFilter" />
-        </template>
-      </q-input>
-    </q-header>
-
-    <q-list>
+  <q-page padding>
+    <q-list class="q-mt-xl">
       <div v-if="searching">
         <Event
           :event="event"
@@ -35,7 +13,7 @@
         </p>
       </div>
 
-      <div v-else>
+      <div v-else class="flex row">
         <Event
           :event="event"
           v-for="event in events"
@@ -48,6 +26,29 @@
       </div>
     </q-list>
   </q-page>
+  <q-page-sticky expand position="top" class="page q-py-xs">
+    <q-input
+      outlined
+      rounded
+      v-model="text"
+      color="green"
+      placeholder="Entrer un titre ou lieu de l'événement..."
+      clearable
+      class="fit"
+      style="max-width: 800px"
+    >
+      <template v-slot:after
+        ><q-btn
+          label="Filtres"
+          flat
+          no-caps
+          icon="tune"
+          @click="() => (showFilter = !showFilter)"
+        />
+        <Filter @finish="(options: any, ev: any) => search(options, ev)" v-model="showFilter" />
+      </template>
+    </q-input>
+  </q-page-sticky>
 </template>
 <script setup lang="ts">
 import Filter from '@/components/Filter.vue'
@@ -167,9 +168,5 @@ const search = (
 <style scoped>
 .page {
   background-color: #f1efe3;
-}
-.header {
-  position: fixed;
-  top: 0%;
 }
 </style>

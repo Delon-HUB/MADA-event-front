@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered flat class="card">
+  <q-card bordered flat class="card" style="max-width: 600px">
     <q-card-section class="text-center">
       <div class="text-h6 text-bold q-mb-lg">Vérification d'identité</div>
       <div>

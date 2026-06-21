@@ -1,12 +1,12 @@
 <template>
-  <q-page class="page">
-    <q-header bordered class="page header">
+  <q-page class="page" padding>
+    <q-item class="page">
       <q-toolbar>
         <q-toolbar-title class="text-black text-bold">
           <q-icon name="notifications" />Notifications</q-toolbar-title
         >
       </q-toolbar>
-    </q-header>
+    </q-item>
     <q-card flat square>
       <q-list bordered>
         <notification-item
@@ -29,11 +29,6 @@ $notificationStore.unread = 0
 </script>
 
 <style scoped>
-.header {
-  position: fixed;
-  top: 0%;
-}
-
 .page {
   background-color: #f1efe3;
 }

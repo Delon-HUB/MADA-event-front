@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered flat class="card">
+  <q-card bordered flat style="max-width: 600px">
     <q-card-section class="text-center">
       <div class="text-h6 text-bold q-mb-lg">S'authentifier</div>
       <q-form>
@@ -72,6 +72,7 @@
     </q-card-section>
   </q-card>
 </template>
+
 <script setup lang="ts">
 import { EOTPOrigin } from '@/enums/EOTPOrigin'
 import type { IUser } from '@/interfaces/IUser'

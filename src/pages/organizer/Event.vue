@@ -24,59 +24,69 @@
     </q-header>
     <q-tab-panels v-model="tab" animated class="page">
       <q-tab-panel name="tab1">
-        <p v-if="!$eventStore.all.length" class="text-center text-overline">Aucun événement...</p>
-        <Event
-          v-for="event in $eventStore.all"
-          :event="event"
-          :key="event._id?.concat(event.status!)"
-          class="q-mb-xs"
-        />
+        <q-list>
+          <p v-if="!$eventStore.all.length" class="text-center text-overline">Aucun événement...</p>
+          <Event
+            v-for="event in $eventStore.all"
+            :event="event"
+            :key="event._id?.concat(event.status!)"
+            class="q-mb-xs"
+          />
+        </q-list>
       </q-tab-panel>
 
       <q-tab-panel name="tab2">
-        <p v-if="!$eventStore.upcoming.length" class="text-center text-overline">
-          Aucun événement...
-        </p>
-        <Event
-          v-for="event in $eventStore.upcoming"
-          :event="event"
-          :key="event._id?.concat(event.status!)"
-          class="q-mb-xs"
-        />
+        <q-list>
+          <p v-if="!$eventStore.upcoming.length" class="text-center text-overline">
+            Aucun événement...
+          </p>
+          <Event
+            v-for="event in $eventStore.upcoming"
+            :event="event"
+            :key="event._id?.concat(event.status!)"
+            class="q-mb-xs"
+          />
+        </q-list>
       </q-tab-panel>
 
       <q-tab-panel name="tab3">
-        <p v-if="!$eventStore.ongoing.length" class="text-center text-overline">
-          Aucun événement...
-        </p>
-        <Event
-          v-for="event in $eventStore.ongoing"
-          :event="event"
-          :key="event._id?.concat(event.status!)"
-          class="q-mb-xs"
-        />
+        <q-list>
+          <p v-if="!$eventStore.ongoing.length" class="text-center text-overline">
+            Aucun événement...
+          </p>
+          <Event
+            v-for="event in $eventStore.ongoing"
+            :event="event"
+            :key="event._id?.concat(event.status!)"
+            class="q-mb-xs"
+          />
+        </q-list>
       </q-tab-panel>
       <q-tab-panel name="tab4">
-        <p v-if="!$eventStore.canceled.length" class="text-center text-overline">
-          Aucun événement...
-        </p>
-        <Event
-          v-for="event in $eventStore.canceled"
-          :event="event"
-          :key="event._id?.concat(event.status!)"
-          class="q-mb-xs"
-        />
+        <q-list>
+          <p v-if="!$eventStore.canceled.length" class="text-center text-overline">
+            Aucun événement...
+          </p>
+          <Event
+            v-for="event in $eventStore.canceled"
+            :event="event"
+            :key="event._id?.concat(event.status!)"
+            class="q-mb-xs"
+          />
+        </q-list>
       </q-tab-panel>
       <q-tab-panel name="tab5">
-        <p v-if="!$eventStore.terminated.length" class="text-center text-overline">
-          Aucun événement...
-        </p>
-        <Event
-          v-for="event in $eventStore.terminated"
-          :event="event"
-          :key="event._id?.concat(event.status!)"
-          class="q-mb-xs"
-        />
+        <q-list>
+          <p v-if="!$eventStore.terminated.length" class="text-center text-overline">
+            Aucun événement...
+          </p>
+          <Event
+            v-for="event in $eventStore.terminated"
+            :event="event"
+            :key="event._id?.concat(event.status!)"
+            class="q-mb-xs"
+          />
+        </q-list>
       </q-tab-panel>
     </q-tab-panels>
     <CreateEvent v-model="show" />
@@ -102,5 +112,12 @@ const show = ref<boolean>(false)
 
 .page {
   background-color: #f1efe3;
+}
+
+.q-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered flat class="card">
+  <q-card bordered flat class="card" style="max-width: 600px">
     <q-card-section class="text-center">
       <p class="text-h6 text-bold q-mb-lg">
         {{ step == 1 ? "S'inscrire en tant que" : 'Veuillez remplir ce formulaire' }}

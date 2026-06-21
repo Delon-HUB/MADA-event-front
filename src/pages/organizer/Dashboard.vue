@@ -1,12 +1,12 @@
 <template>
   <q-page class="page q-mx-sm">
-    <q-header bordered class="page header">
+    <div bordered class="page">
       <q-toolbar>
         <q-toolbar-title class="text-black text-bold">
           <q-icon name="bar_chart_4_bars" />Statistiques</q-toolbar-title
         >
       </q-toolbar>
-    </q-header>
+    </div>
     <q-card flat>
       <div class="row text-center">
         <p class="text-overline full-width">{{ $eventStore.all.length }} événements en total</p>
@@ -145,10 +145,10 @@ const refunded = computed(() => addSeparatorNumber($ticketStore.totalRefundedAmo
 </script>
 
 <style scoped>
-.header {
+/* .header {
   position: fixed;
   top: 0%;
-}
+} */
 
 .page {
   background-color: #f1efe3;

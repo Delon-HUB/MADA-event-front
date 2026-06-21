@@ -1,20 +1,23 @@
 <template>
   <q-card flat>
     <q-card-section horizontal>
-      <q-img class="col-5" :src="qrCode" />
-      <q-card-section>
-        <q-item-section class="text-bold">
-          <q-item-label class="text-h6">
+      <q-item>
+        <q-item-section class="rounded-borders">
+          <img v-if="qrCode" :src="qrCode" :ratio="16 / 9" class="fit" />
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label header>
             {{ event?.title }}
           </q-item-label>
-          <q-item-label class="text-bold" v-if="event?.startDate">
+          <q-item-label v-if="event?.startDate" caption>
             <q-icon size="24px" name="calendar_month" />
             {{ new Date(event.startDate!).toLocaleDateString() }}
           </q-item-label>
-          <q-item-label>
+          <q-item-label caption>
             <q-icon size="24px" name="place" color="red" /> {{ event?.location?.split(',')[0] }}
           </q-item-label>
-          <q-item-label>
+          <q-item-label caption>
             <q-img :ratio="4 / 4" width="24px" height="24px" :src="paymentMethodeLogo" />
 
             {{
@@ -23,18 +26,19 @@
                 : 'montant : ' + addSeparatorNumber(payment.amount, 3, ' ') + 'Ar'
             }}
           </q-item-label>
-          <q-item-label>
+          <q-item-label caption>
             <q-icon name="phone_enabled" size="24px" /> {{ payment.phoneNumber }}
           </q-item-label>
-          <q-item-label>
+          <q-item-label caption>
             {{ ticket?.nbChild }}🧒🏻 + {{ ticket?.nbAdult }}👨🏻‍💼 + {{ ticket?.nbSenior }}👴🏻 =
             {{ ticket?.nbChild + ticket?.nbAdult + ticket?.nbSenior }}
           </q-item-label>
         </q-item-section>
-      </q-card-section>
+      </q-item>
     </q-card-section>
 
     <q-separator />
+
     <q-card-actions>
       <q-btn
         v-if="props.payment.status == PaymentStatus.PAID"
