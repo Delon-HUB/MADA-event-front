@@ -1,0 +1,35 @@
+<template>
+  <q-page class="page" padding>
+    <q-item class="page">
+      <q-toolbar>
+        <q-toolbar-title class="text-black text-bold">
+          <q-icon name="notifications" />Notifications</q-toolbar-title
+        >
+      </q-toolbar>
+    </q-item>
+    <q-card flat square>
+      <q-list bordered>
+        <notification-item
+          v-if="$notificationStore.notifications.length > 0"
+          :data="notif"
+          v-for="notif in $notificationStore.notifications"
+        />
+        <p v-else class="text-center text-overline page">Vous n'avez pas de notification</p>
+      </q-list>
+    </q-card>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import NotificationItem from '@/components/NotificationItem.vue'
+import { useNotificationStore } from '@/stores/Notification.store'
+
+const $notificationStore = useNotificationStore()
+$notificationStore.unread = 0
+</script>
+
+<style scoped>
+.page {
+  background-color: #f1efe3;
+}
+</style>
